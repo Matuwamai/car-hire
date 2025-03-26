@@ -1,14 +1,71 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model CarOwner {
+  id        String   @id @default(uuid())
+  name      String
+  phone     String   @unique
+  idNumber  String   @unique
+  email     String   @unique
+  password  String
+  address   String
+  profileImage String? 
+  cars      Car[]
+  createdAt DateTime @default(now())
+}
+
+model Organization {
+  id              String   @id @default(uuid())
+  name            String
+  registrationNo  String   @unique
+  license         String
+  email           String   @unique
+  password        String
+  profileImage    String?
+  isVerified      Boolean  @default(false)
+  createdAt       DateTime @default(now())
+}
+
+model CarCategory {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  cars        Car[]
+  createdAt   DateTime @default(now())
+}
+
+model Car {
+  id              String       @id @default(uuid())
+  owner           CarOwner     @relation(fields: [ownerId], references: [id])
+  ownerId         String
+  category        CarCategory  @relation(fields: [categoryId], references: [id])
+  categoryId      String
+    images          Json   // Array of image URLs
+  registrationNo  String   @unique
+  ownerName       String
+  brand           String
+  model           String
+  pricePerDay     Float
+  pricePerMonth   Float
+  pricePer3Months Float
+  pricePer6Months Float
+  pricePerYear    Float
+  mileage         Float
+  color           String
+  description     String?
+  isApproved      Boolean  @default(false) // Admin verification
+  createdAt       DateTime @default(now())
 }
