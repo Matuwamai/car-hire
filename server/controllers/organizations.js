@@ -41,7 +41,7 @@ export const loginOrganization = async (req, res) => {
     if (!organization.isVerified) {
       return res.status(403).json({ error: "Organization not verified by admin" });
     }
-    const token = jwt.sign({ id: organization.id, email: organization.email }, process.env.JWT_SECRET, { expiresIn: "7d" });
+    const token = jwt.sign({ id: organization.id, email: organization.email,  role: organization.role}, process.env.JWT_SECRET, { expiresIn: "7d" });
     res.json({ message: "Login successful", token });
   } catch (error) {
     console.error("Login Error:", error);
@@ -61,21 +61,32 @@ export const getAllOrganizations = async (req, res) => {
 // Get single Organization by ID
 export const getOrganizationById = async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = parseInt(req.params.id, 10); // Convert id to a number
+    if (isNaN(id)) {
+      return res.status(400).json({ error: "Invalid ID format" });
+    }
+
     const organization = await prisma.organization.findUnique({ where: { id } });
+
     if (!organization) {
       return res.status(404).json({ error: "Organization not found" });
     }
+
     res.json(organization);
   } catch (error) {
+    console.error("Error fetching organization:", error);
     res.status(500).json({ error: "Error fetching organization" });
   }
 };
 
+
 // Update Organization
 export const updateOrganization = async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = parseInt(req.params.id, 10); // Convert id to a number
+    if (isNaN(id)) {
+      return res.status(400).json({ error: "Invalid ID format" });
+    }
     const updatedOrganization = await prisma.organization.update({
       where: { id },
       data: req.body,
@@ -89,7 +100,10 @@ export const updateOrganization = async (req, res) => {
 // Delete Organization
 export const deleteOrganization = async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = parseInt(req.params.id, 10); // Convert id to a number
+    if (isNaN(id)) {
+      return res.status(400).json({ error: "Invalid ID format" });
+    }
     await prisma.organization.delete({ where: { id } });
     res.json({ message: "Organization deleted successfully" });
   } catch (error) {

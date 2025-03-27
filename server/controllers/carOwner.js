@@ -40,7 +40,7 @@ export const loginCarOwner = async (req, res) => {
     const isMatch = await bcrypt.compare(password, carOwner.password);
     if (!isMatch) return res.status(401).json({ error: "Invalid credentials" });
 
-    const token = jwt.sign({ id: carOwner.id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: carOwner.id , role:carOwner.role}, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
 
@@ -63,7 +63,10 @@ export const getAllCarOwners = async (req, res) => {
 // Get a Single Car Owner
 export const getCarOwnerById = async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = parseInt(req.params.id, 10); // Convert id to a number
+    if (isNaN(id)) {
+      return res.status(400).json({ error: "Invalid ID format" });
+    }
     const carOwner = await prisma.carOwner.findUnique({ where: { id } });
     if (!carOwner) return res.status(404).json({ error: "Car owner not found" });
     res.status(200).json(carOwner);
@@ -75,7 +78,10 @@ export const getCarOwnerById = async (req, res) => {
 // Update Car Owner
 export const updateCarOwner = async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = parseInt(req.params.id, 10); // Convert id to a number
+    if (isNaN(id)) {
+      return res.status(400).json({ error: "Invalid ID format" });
+    }
     const updatedCarOwner = await prisma.carOwner.update({
       where: { id },
       data: req.body,
@@ -89,7 +95,10 @@ export const updateCarOwner = async (req, res) => {
 // Delete Car Owner
 export const deleteCarOwner = async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = parseInt(req.params.id, 10); // Convert id to a number
+    if (isNaN(id)) {
+      return res.status(400).json({ error: "Invalid ID format" });
+    }
     await prisma.carOwner.delete({ where: { id } });
     res.status(200).json({ message: "Car owner deleted successfully" });
   } catch (error) {
