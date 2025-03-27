@@ -61,19 +61,20 @@ model Car {
   ownerId         Int
   category        CarCategory  @relation(fields: [categoryId], references: [id])
   categoryId      Int
-    images          Json   // Array of image URLs
+  images          Json   // Array of image URLs
   registrationNo  String   @unique
   ownerName       String
   brand           String
   model           String
-  pricePerDay     Float
-  pricePerMonth   Float
-  pricePer3Months Float
-  pricePer6Months Float
-  pricePerYear    Float
-  mileage         Float
+  pricePerDay     Float?
+  pricePerMonth   Float?
+  pricePer3Months Float?
+  pricePer6Months Float?
+  pricePerYear    Float?
+  mileage         Float?
   color           String
   description     String?
   isApproved      Boolean  @default(false) // Admin verification
   createdAt       DateTime @default(now())
+   isHired         Boolean    @default(false) // Status to check if the car is hired
 }

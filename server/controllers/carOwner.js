@@ -40,7 +40,7 @@ export const loginCarOwner = async (req, res) => {
     const isMatch = await bcrypt.compare(password, carOwner.password);
     if (!isMatch) return res.status(401).json({ error: "Invalid credentials" });
 
-    const token = jwt.sign({ id: carOwner.id , role:carOwner.role}, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: carOwner.id , role: carOwner.role }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
 
