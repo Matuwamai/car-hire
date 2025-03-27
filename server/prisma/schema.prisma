@@ -97,7 +97,7 @@ model Booking {
 
 model Period {
   id        Int      @id @default(autoincrement())
-  name      String   @unique // Example: "1 Day", "1 Month", "3 Months"
+  name      String   @unique // Example: "1 Day", "1 Month", "3 Months", "6 Mounths", "1 Year"
   price     Float    // Base price for this period (used to calculate total booking price)
   bookings  Booking[]
   createdAt DateTime @default(now())

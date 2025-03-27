@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+ // REMOVE THIS LINE (not needed in JS)
 
 dotenv.config();
 
@@ -8,22 +9,26 @@ dotenv.config();
  */
 export const authenticate = (req, res, next) => {
   try {
-    const token = req.headers.authorization?.split(" ")[1];
-
-    if (!token) {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({ error: "Unauthorized. No token provided." });
     }
 
-    // Verify the token and decode user info
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // Attach user data to request object
+    const token = authHeader.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ error: "Unauthorized. Token is missing." });
+    }
 
+    // Verify the token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    req.user = decoded; // Attach user data to request object
     next();
   } catch (error) {
+    console.error("Authentication error:", error.message);
     return res.status(401).json({ error: "Invalid or expired token." });
   }
 };
-
 /**
  * ✅ Role-based authorization middleware
  * @param {string[]} roles - Allowed roles (e.g., ["ADMIN"], ["CAR_OWNER", "ORGANIZATION"])

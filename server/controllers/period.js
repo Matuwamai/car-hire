@@ -1,12 +1,15 @@
-import prisma from "../prismaClient.js";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
 
 
 export const createPeriod = async (req, res) => {
   try {
-    const { name, durationInDays, priceMultiplier } = req.body;
+    const { name,  price } = req.body;
 
     const period = await prisma.period.create({
-      data: { name, durationInDays, priceMultiplier },
+      data: { name, price },
     });
 
     res.status(201).json(period);
@@ -46,11 +49,11 @@ export const getPeriodById = async (req, res) => {
 export const updatePeriod = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, durationInDays, priceMultiplier } = req.body;
+    const { name,  price } = req.body;
 
     const period = await prisma.period.update({
       where: { id: parseInt(id) },
-      data: { name, durationInDays, priceMultiplier },
+      data: { name,  price },
     });
 
     res.status(200).json(period);
