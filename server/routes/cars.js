@@ -5,16 +5,19 @@ import {
   getCarById,
   verifyCar,
   updateCar,
+  getAllCars,
+  deleteCar,
   updateCarStatus,
 } from "../controllers/cars.js";
 
 const router = express.Router();
 
 // Route for creating a car (Admin only)
-router.post("", authenticate, authorizeRoles(["CAR_OWNER"]), createCar);
+router.post("/", authenticate, authorizeRoles(["CAR_OWNER"]), createCar);
 
 // Route for getting car details by ID
 router.get("/:id", getCarById);
+router.get("/", authenticate, getAllCars)
 
 // Route for verifying a car (Admin only)
 router.patch("/verify/:id", authenticate, authorizeRoles(["ADMIN"]), verifyCar);
@@ -23,6 +26,7 @@ router.patch("/verify/:id", authenticate, authorizeRoles(["ADMIN"]), verifyCar);
 router.put("/:id", authenticate, authorizeRoles(["ADMIN"]), updateCar);
 
 // Route for updating car hire status (Admin only)
-router.patch("/:id/status", authenticate, authorizeRoles(["ADMIN"]), updateCarStatus);
+router.patch("/status/:id", authenticate, authorizeRoles(["ADMIN"]), updateCarStatus);
+router.delete("/:id", authenticate, authorizeRoles(["ADMIN"]), deleteCar)
 
 export default router;

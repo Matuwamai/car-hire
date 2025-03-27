@@ -83,7 +83,16 @@ export const getCarById = async (req, res) => {
     res.status(500).json({ error: "Error fetching car." });
   }
 };
-
+// get all cars
+export const getAllCars = async (req, res) =>{
+  try{
+    const cars = await prisma.car.findMany();
+    res.json(cars);
+  }catch(error){
+    console.log(error);
+    res.status(500).json({error: "Error fetching  cars"});
+  }
+}
 /**
  * ✅ Admin only: Verify the car
  */
@@ -177,7 +186,7 @@ export const updateCarStatus = async (req, res) => {
     // Update car status
     const car = await prisma.car.update({
       where: { id: parseInt(id) },
-      data: { isHired },
+      data: { isHired : true},
     });
 
     res.json({ car, message: `Car hire status updated to ${isHired ? "hired" : "available"}.` });
@@ -186,3 +195,19 @@ export const updateCarStatus = async (req, res) => {
     res.status(500).json({ error: "Error updating car status." });
   }
 };
+
+export const deleteCar  = async (req, res) =>{
+  try{
+    const { id } = req.params;
+
+    await prisma.car.delete({
+      where: { id: Number(id) },
+    });
+
+    res.json({ message: "Car deleted successfully" });
+
+  }catch(error){
+    console.log(error);
+    res.status(500).json({error: "Error deleting car"})
+  }
+}
