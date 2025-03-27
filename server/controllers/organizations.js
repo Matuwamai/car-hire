@@ -4,16 +4,15 @@ import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-
 // Register Organization
 export const registerOrganization = async (req, res) => {
   try {
-    const { name, registrationNumber, license, email, password } = req.body; 
+    const { name, registrationNo, license, email, password } = req.body; 
     const hashedPassword = await bcrypt.hash(password, 10);
     const organization = await prisma.organization.create({
       data: {
         name,
-        registrationNumber,
+        registrationNo,
         license,
         email,
         password: hashedPassword,
@@ -97,3 +96,34 @@ export const deleteOrganization = async (req, res) => {
     res.status(500).json({ error: "Error deleting organization" });
   }
 };
+export const verifyOrganization = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Check if the requester is an admin
+    if (req.user.role !== "ADMIN") {
+      return res.status(403).json({ error: "Access denied. Admins only." });
+    }
+
+    // Find the organization
+    const organization = await prisma.organization.findUnique({
+      where: { id: Number(id) },
+    });
+
+    if (!organization) {
+      return res.status(404).json({ error: "Organization not found" });
+    }
+
+    // Update verification status
+    await prisma.organization.update({
+      where: { id: Number(id) },
+      data: { isVerified: true },
+    });
+
+    return res.status(200).json({ message: "Organization verified successfully" });
+  } catch (error) {
+    console.error("Error verifying organization:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+

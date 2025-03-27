@@ -15,7 +15,7 @@ app.use(cors());
 // Routes
 app.use("/api/admin", adminRoutes);
 app.use("/api/carowners", carOwnerRoutes);
-app.use("api/organizations", organizationsRoutes)
+app.use("/api/organizations", organizationsRoutes)
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
