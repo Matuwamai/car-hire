@@ -1,21 +1,17 @@
 import express from "express";
 import {
-  registerCarOwner,
-  loginCarOwner,
   getAllCarOwners,
   getCarOwnerById,
   updateCarOwner,
   deleteCarOwner,
 } from "../controllers/carOwner.js";
+import { authenticate, authorizeRoles } from "../middleware/auth.js";
+
 
 const router = express.Router();
-
-// Car Owner Routes
-router.post("/register", registerCarOwner);
-router.post("/login", loginCarOwner);
-router.get("/", getAllCarOwners);
-router.get("/:id", getCarOwnerById);
-router.put("/:id", updateCarOwner);
-router.delete("/:id", deleteCarOwner);
+router.get("/", authenticate, getAllCarOwners);
+router.get("/:id", authenticate, getCarOwnerById);
+router.put("/:id", authenticate, authorizeRoles(["ADMIN"]), updateCarOwner);
+router.delete("/:id",authenticate, authorizeRoles(["ADMIN"]), deleteCarOwner);
 
 export default router;
