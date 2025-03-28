@@ -7,40 +7,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Admin {
- id        Int      @id @default(autoincrement())
+model User {
+  id        Int      @id @default(autoincrement())
   email     String   @unique
   password  String
+  name        String
+  profileImage   String?
   createdAt DateTime @default(now())
-  role      Role     @default(ADMIN) 
-}
-
-model CarOwner {
- id        Int      @id @default(autoincrement())
-  name      String
-  phone     String   @unique
-  idNumber  String   @unique
-  email     String   @unique
-  password  String
-  address   String
-  profileImage String? 
-  cars      Car[]
-  createdAt DateTime @default(now())
-  role      Role     @default(CAR_OWNER)
-}
-
-model Organization {
-id        Int      @id @default(autoincrement())
-  name            String
-  registrationNo  String   @unique
-  license         String
-  email           String   @unique
-  password        String
-  profileImage    String?
-  isVerified      Boolean  @default(false)
-  createdAt       DateTime @default(now())
-  role            Role     @default(ORGANIZATION)
-  bookings      Booking[]
+  role      Role     @default(ADMIN)
+  organization  Organization?
+  carOwner CarOwner?
 }
 enum Role {
   ADMIN
@@ -48,8 +24,30 @@ enum Role {
   ORGANIZATION
 }
 
+model CarOwner {
+  id           Int      @id @default(autoincrement())
+  phone        String   @unique
+  idNumber     String   @unique
+  address      String
+  cars         Car[]
+  userId     Int @unique
+  user        User @relation(fields: [userId],references: [id])
+}
+
+model Organization {
+  id             Int       @id @default(autoincrement())
+  registrationNo String    @unique
+  license        String
+  isVerified     Boolean   @default(false)
+  bookings       Booking[]
+  userId          Int @unique
+  user   User @relation(fields: [userId], references: [id])
+}
+
+
+
 model CarCategory {
-id        Int      @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String   @unique
   description String?
   cars        Car[]
@@ -57,48 +55,37 @@ id        Int      @id @default(autoincrement())
 }
 
 model Car {
-  id        Int      @id @default(autoincrement())
-  owner           CarOwner     @relation(fields: [ownerId], references: [id])
+  id              Int         @id @default(autoincrement())
+  owner           CarOwner    @relation(fields: [ownerId], references: [id])
   ownerId         Int
-  category        CarCategory  @relation(fields: [categoryId], references: [id])
+  category        CarCategory @relation(fields: [categoryId], references: [id])
   categoryId      Int
-  images          Json   // Array of image URLs
-  registrationNo  String   @unique
+  images          Json 
+  registrationNo  String      @unique
   ownerName       String
   brand           String
   model           String
   pricePerDay     Float?
-  pricePerMonth   Float?
-  pricePer3Months Float?
-  pricePer6Months Float?
-  pricePerYear    Float?
   mileage         Float?
   color           String
   description     String?
-  isApproved      Boolean  @default(false) // Admin verification
-  createdAt       DateTime @default(now())
-  isHired         Boolean    @default(false) // Status to check if the car is hired
-  booking       Booking?
+  isApproved      Boolean     @default(false) // Admin verification
+  createdAt       DateTime    @default(now())
+  isHired         Boolean     @default(false) // Derived from active booking status
+  bookings        Booking[]   // One car can have multiple bookings
 }
 
 model Booking {
-  id              Int        @id @default(autoincrement())
+  id              Int          @id @default(autoincrement())
   car             Car          @relation(fields: [carId], references: [id])
-  carId           Int          @unique  //  Ensures one-to-one relation
-
-  organization   Organization @relation(fields: [organizationId], references: [id]) 
+  carId          Int
+  organization   Organization  @relation(fields: [organizationId], references: [id])
   organizationId Int
-  period         Period     @relation(fields: [periodId], references: [id]) // Link to the period table
   periodId       Int
-  totalPrice     Float      // Calculated price based on period pricing
-  status         String     @default("pending") // "pending", "confirmed", "cancelled", "completed"
-  createdAt      DateTime   @default(now())
-}
-
-model Period {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique // Example: "1 Day", "1 Month", "3 Months", "6 Mounths", "1 Year"
-  price     Float    // Base price for this period (used to calculate total booking price)
-  bookings  Booking[]
-  createdAt DateTime @default(now())
+  totalPrice     Float 
+  status         String       @default("pending") // pending, active, completed, cancelled
+  createdAt      DateTime     @default(now())
+  startDate      DateTime
+  endDate        DateTime
+  isActive       Boolean      @default(true) // Ensures only one active booking per car
 }
