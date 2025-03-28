@@ -69,10 +69,10 @@ model Car {
   mileage         Float?
   color           String
   description     String?
-  isApproved      Boolean     @default(false) // Admin verification
+  isApproved      Boolean     @default(false) 
   createdAt       DateTime    @default(now())
-  isHired         Boolean     @default(false) // Derived from active booking status
-  bookings        Booking[]   // One car can have multiple bookings
+  isHired         Boolean     @default(false) 
+  bookings        Booking[]   
 }
 
 model Booking {
@@ -83,9 +83,9 @@ model Booking {
   organizationId Int
   periodId       Int
   totalPrice     Float 
-  status         String       @default("pending") // pending, active, completed, cancelled
+  status         String       @default("pending") 
   createdAt      DateTime     @default(now())
   startDate      DateTime
   endDate        DateTime
-  isActive       Boolean      @default(true) // Ensures only one active booking per car
+  isActive       Boolean      @default(true) 
 }

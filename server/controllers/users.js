@@ -7,48 +7,61 @@ const prisma = new PrismaClient();
 
 export const createUser = async (req, res) => {
   try {
-    const { role, email, password, name, profileImage, phone, address, registrationNo, license } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const {
+      role,
+      email,
+      password,
+      name,
+      profileImage,
+      phone,
+      address,
+      idNumber,
+      registrationNo,
+      license,
+    } = req.body;
 
-    let user;
-
-    if (role === "admin") {
-      user = await prisma.admin.create({
-        data: { email, password: hashedPassword },
-      });
-    } else if (role === "carOwner") {
-      user = await prisma.carOwner.create({
-        data: {
-          name, 
-          email,
-          password: hashedPassword,
-          profileImage,
-          phone,
-          address
-        },
-      });
-    } else if (role === "organization") {
-      user = await prisma.organization.create({
-        data: {
-          profileImage,
-          license,
-          registrationNo, 
-          email,
-          password: hashedPassword,
-          isVerified: false, 
-        },
-      });
-    } else {
-      return res.status(400).json({ error: "Invalid role specified" });
+    if (!role || !email || !password) {
+      return res.status(400).json({ error: "Role, email, and password are required" });
     }
 
-    res.status(201).json({ message: `${role} created successfully`, user });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        name,
+        role, 
+        profileImage,
+      },
+    });
+
+    let userDetails;
+
+    if (role === "CAR_OWNER") {
+      userDetails = await prisma.carOwner.create({
+        data: {
+          userId: user.id, 
+          phone,
+          address,
+          idNumber,
+        },
+      });
+    } else if (role === "ORGANIZATION") {
+      userDetails = await prisma.organization.create({
+        data: {
+          userId: user.id,
+          registrationNo,
+          license,
+          isVerified: false,
+        },
+      });
+    }
+    res.status(201).json({ message: `${role} created successfully`, user, userDetails });
   } catch (error) {
     console.error("User Creation Error:", error);
     res.status(500).json({ error: error.message || "Error creating user" });
   }
 };
-
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -66,4 +79,14 @@ export const loginUser = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: "Error logging in" });
   }
+};
+ 
+export const getAllUsers = async(req,res) =>{
+  try{
+ const users = await prisma.user.findMany();
+ res.status(200).json(users);
+  }catch(error){
+  console.log(error);
+  res.status(500).json({error: "Error fetching users"})
+}
 };

@@ -10,7 +10,7 @@ export const getAllCarOwners = async (req, res) => {
     res.status(500).json({ error: "Error fetching car owners" });
   }
 };
-r
+
 export const getCarOwnerById = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10); 

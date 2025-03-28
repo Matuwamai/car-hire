@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
-import adminRoutes from "./routes/users.js";
+import usersRoutes from "./routes/users.js";
 import carOwnerRoutes from "./routes/carOwner.js"
 import organizationsRoutes from "./routes/organizations.js"
 import carsRoutes from "./routes/cars.js"
@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(cors());
 
 // Routes
-app.use("/api/admin", adminRoutes);
+app.use("/api/users", usersRoutes);
 app.use("/api/carowners", carOwnerRoutes);
 app.use("/api/organizations", organizationsRoutes);
 app.use("/api/cars", carsRoutes);
