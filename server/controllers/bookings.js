@@ -6,31 +6,55 @@ const prisma = new PrismaClient();
 
 export const createBooking = async (req, res) => {
   try {
-    const { carId, organizationId, periodId, totalPrice } = req.body;
+    const { carId, organizationId,  startDate, endDate } = req.body;
+    if (!carId || !organizationId ||  !startDate || !endDate) {
+      return res.status(400).json({ error: "All fields are required for booking" });
+    }
+    const start = new Date(startDate);
+    const end = new Date(endDate);
 
-    // Ensure the car is not already booked
+    if (start >= end) {
+      return res.status(400).json({ error: "Start date must be before end date" });
+    }
     const car = await prisma.car.findUnique({ where: { id: carId } });
-    if (!car) return res.status(404).json({ message: "Car not found" });
-    if (car.isHired) return res.status(400).json({ message: "Car is already booked" });
+    if (!car) {
+      return res.status(404).json({ error: "Car not found" });
+    }
+    const { pricePerDay } = car;
+    const totalDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+    const totalPrice = totalDays * pricePerDay;
+    const existingBooking = await prisma.booking.findFirst({
+      where: { carId, isActive: true },
+    });
 
+    if (existingBooking) {
+      return res.status(400).json({ error: "This car is already booked and currently in use." });
+    }
     const booking = await prisma.booking.create({
       data: {
         carId,
         organizationId,
-        periodId,
-        totalPrice,
+        totalPrice, 
+        startDate: start,
+        endDate: end,
+        isActive: true, 
       },
     });
-
-    // Update the car status to "hired"
     await prisma.car.update({
       where: { id: carId },
       data: { isHired: true },
     });
 
-    res.status(201).json(booking);
+    res.status(201).json({
+      message: "Booking created successfully",
+      booking,
+      totalDays,
+      pricePerDay,
+      totalPrice,
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Booking Creation Error:", error);
+    res.status(500).json({ error: error.message || "Error creating booking" });
   }
 };
 
@@ -84,12 +108,8 @@ export const updateBooking = async (req, res) => {
 export const deleteBooking = async (req, res) => {
   try {
     const { id } = req.params;
-
-    // Find the booking first
     const booking = await prisma.booking.findUnique({ where: { id: parseInt(id) } });
     if (!booking) return res.status(404).json({ message: "Booking not found" });
-
-    // Update car status before deleting
     await prisma.car.update({
       where: { id: booking.carId },
       data: { isHired: false },

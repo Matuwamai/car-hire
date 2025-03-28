@@ -7,7 +7,7 @@ import organizationsRoutes from "./routes/organizations.js"
 import carsRoutes from "./routes/cars.js"
 import categoryRoutes from "./routes/category.js";
 import bookingsRoutes from "./routes/bookings.js"
-import periodRoutes from "./routes/period.js"
+
 
 
 
@@ -25,7 +25,7 @@ app.use("/api/organizations", organizationsRoutes);
 app.use("/api/cars", carsRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/bookings", bookingsRoutes)
-app.use("/api/period", periodRoutes)
+
 
 
 const PORT = process.env.PORT || 5000;

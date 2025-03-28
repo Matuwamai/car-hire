@@ -81,7 +81,6 @@ model Booking {
   carId          Int
   organization   Organization  @relation(fields: [organizationId], references: [id])
   organizationId Int
-  periodId       Int
   totalPrice     Float 
   status         String       @default("pending") 
   createdAt      DateTime     @default(now())
