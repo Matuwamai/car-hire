@@ -1,9 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-
-// const BASE_URL = import.meta.env.VITE_BASE_URL; // Use the environment variable
+import { AuthContext } from "../context/authContext"; 
 
 const Login: React.FC = () => {
+  const authContext = useContext(AuthContext);
+  if (!authContext) {
+    throw new Error("AuthContext must be used within an AuthProvider");
+  }
+  const { login } = authContext; // Now login is properly typed
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -18,23 +23,25 @@ const Login: React.FC = () => {
 
     try {
       const response = await fetch(`http://localhost:5000/api/users/login`, {
-        
-        // headers: { "Content-Type": "application/json" },
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Login failed");
 
-      // Store token & user info in localStorage
-      localStorage.setItem("token", data.token);
+      // Store token and user role in context
+      login(data.token, data.role);
 
-      // Redirect to dashboard
-      navigate("/dashboard");
+      // Navigate based on role
+      navigate(data.role === "admin" ? "/admin-dashboard" : "/dashboard");
     } catch (err: any) {
       setError(err.message);
-    } finally{
-        setLoading(false);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -60,10 +67,13 @@ const Login: React.FC = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <button type="submit" disabled={loading}  className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700">
-          {loading ? 'Logging in...' : 'Login'}
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700"
+          >
+            {loading ? "Logging in..." : "Login"}
           </button>
-         
         </form>
       </div>
     </div>

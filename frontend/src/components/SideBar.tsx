@@ -10,7 +10,6 @@ interface SidebarProps {
     role: "admin" | "carowner" | "organization";
   };
 }
-
 const Sidebar: React.FC<SidebarProps> = ({ user }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
