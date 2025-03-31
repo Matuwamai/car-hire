@@ -9,7 +9,8 @@ interface AuthContextType {
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<{ id: string; role: string; token: string } | null>(null);
+  const userFromLocalstorage = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") ): null
+  const [user, setUser] = useState<{ id: string; role: string; token: string } | null>(userFromLocalstorage);
 
   const BASE_URL = import.meta.env.VITE_BASE_URL;
   const login = async (email: string, password: string) => {
@@ -31,7 +32,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw new Error("No token received");
       }
     } catch (error) {
-      console.error("Login failed", error);
+      console.log("Login failed", error);
       throw new Error("Invalid email or password");
     }
   };

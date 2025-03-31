@@ -7,11 +7,12 @@ import { Link, useNavigate } from "react-router-dom";
 
 interface SidebarProps {
   user: {
-    role: "admin" | "carowner" | "organization";
+    role: "ADMIN" | "CAR_OWNER" | "ORGANIZATION";
   };
 }
 const Sidebar: React.FC<SidebarProps> = ({ user }) => {
   const [isOpen, setIsOpen] = useState(false);
+  console.log(user)
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -36,7 +37,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
   // Define sidebar menu items based on role
   const getMenuItems = () => {
     switch (user.role) {
-      case "admin":
+      case "ADMIN":
         return [
           { path: "/users", label: "Users", icon: <FaUsers size={20} /> },
           { path: "/carowners", label: "Car Owners", icon: <FaCar size={20} /> },
@@ -46,7 +47,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
           { path: "/bookings", label: "Bookings", icon: <FaBook size={20} /> },
           { path: "/cars", label: "Cars/Home", icon: <FaCar size={20} /> },
         ];
-      case "carowner":
+      case "CAR_OWNER":
         return [
           { path: "/create-car", label: "Create Car", icon: <FaPlusCircle size={20} /> },
           { path: "/cars", label: "My Cars", icon: <FaCar size={20} /> },
@@ -54,7 +55,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
           { path: "/bookings", label: "Bookings", icon: <FaBook size={20} /> },
           { path: "/profile", label: "Profile", icon: <FaUserCircle size={20} /> },
         ];
-      case "organization":
+      case "ORGANIZATION":
         return [
           { path: "/cars", label: "Cars/Home", icon: <FaCar size={20} /> },
           { path: "/categories", label: "Categories", icon: <MdCategory size={20} /> },

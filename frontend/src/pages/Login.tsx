@@ -22,22 +22,8 @@ const Login: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`http://localhost:5000/api/users/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Login failed");
-
-      // Store token and user role in context
-      login(data.token, data.role);
-
-      // Navigate based on role
-      navigate(data.role === "admin" ? "/admin-dashboard" : "/dashboard");
+     
+      login(email, password);
     } catch (err: any) {
       setError(err.message);
     } finally {

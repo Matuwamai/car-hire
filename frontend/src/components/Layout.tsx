@@ -1,17 +1,21 @@
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet, redirect } from "react-router-dom";
 import Navbar from "./NavBar";
 import Sidebar from "./SideBar";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../context/authContext";
 
 const Layout = () => {
   const authContext = useContext(AuthContext);
+
 
   if (!authContext) {
     throw new Error("AuthContext must be used within an AuthProvider");
   }
 
   const { user } = authContext; // Get user data from AuthContext
+  if (!user) {
+    return <Navigate to="/login" />
+  }
 
   return (
     <div className="flex">
