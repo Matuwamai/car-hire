@@ -12,7 +12,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const userFromLocalstorage = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") ): null
   const [user, setUser] = useState<{ id: string; role: string; token: string } | null>(userFromLocalstorage);
 
-  const BASE_URL = import.meta.env.VITE_BASE_URL;
+  const BASE_URL =` http://localhost:5000/api`
   const login = async (email: string, password: string) => {
     try {
       const res = await axios.post(`${BASE_URL}/users/login`, { email, password });
@@ -52,3 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     </AuthContext.Provider>
   );
 };
+
+
+
+
