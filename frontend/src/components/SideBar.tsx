@@ -42,7 +42,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
           { path: "/users", label: "Users", icon: <FaUsers size={20} /> },
           { path: "/carowners", label: "Car Owners", icon: <FaCar size={20} /> },
           { path: "/organizations", label: "Organizations", icon: <FaHome size={20} /> },
-          { path: "/create-category", label: "Create Category", icon: <FaPlusCircle size={20} /> },
+          { path: "/create-Category", label: "Create Category", icon: <FaPlusCircle size={20} /> },
           { path: "/categories", label: "Categories", icon: <MdCategory size={20} /> },
           { path: "/bookings", label: "Bookings", icon: <FaBook size={20} /> },
           { path: "/cars", label: "Cars", icon: <FaCar size={20} /> },

@@ -11,6 +11,7 @@ import Organizations from './pages/Organization'
 import OrganizationDetail from './pages/OrganizationDetails'
 import Cars from './pages/Cars'
 import CreateCar from './pages/CreateCar'
+import CreateCategory from './pages/CreateCarCategory'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -25,6 +26,7 @@ createRoot(document.getElementById('root')!).render(
     <Route path='/organizations/:id' element={<OrganizationDetail />}/>
     <Route path='/cars' element={<Cars />}/>
     <Route  path='/create-car' element={<CreateCar />}/>
+    <Route  path='/create-Category' element={<CreateCategory />}/>
     </Route>
   </Routes>
   </AuthProvider>
