@@ -8,6 +8,7 @@ import Login from './pages/Login'
 import SignupPage from './pages/SignupPage'
 import Users from './pages/User'
 import Organizations from './pages/Organization'
+import OrganizationDetail from './pages/OrganizationDetails'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -19,6 +20,7 @@ createRoot(document.getElementById('root')!).render(
     <Route  element={<Layout />}>
     <Route path='/users' element={<Users />}/>
     <Route path='/organizations' element={<Organizations />}/>
+    <Route path='/organizations/:id' element={<OrganizationDetail />}/>
     </Route>
   </Routes>
   </AuthProvider>
