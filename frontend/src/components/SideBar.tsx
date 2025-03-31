@@ -45,7 +45,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
           { path: "/create-category", label: "Create Category", icon: <FaPlusCircle size={20} /> },
           { path: "/categories", label: "Categories", icon: <MdCategory size={20} /> },
           { path: "/bookings", label: "Bookings", icon: <FaBook size={20} /> },
-          { path: "/cars", label: "Cars/Home", icon: <FaCar size={20} /> },
+          { path: "/cars", label: "Cars", icon: <FaCar size={20} /> },
         ];
       case "CAR_OWNER":
         return [
