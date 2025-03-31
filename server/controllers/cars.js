@@ -1,40 +1,22 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-/**
- * ✅ Create a car (only admin can verify and create)
- */
+// Create a new car with multiple images
 export const createCar = async (req, res) => {
   try {
-    const {
-      ownerId,
-      categoryId,
-      registrationNo,
-      ownerName,
-      brand,
-      model,
-      images,
-      pricePerDay,
-      pricePerMonth,
-      pricePer3Months,
-      pricePer6Months,
-      pricePerYear,
-      mileage,
-      color,
-      description,
-    } = req.body;
-
-    // Admin verification check
+    const { ownerId, categoryId, registrationNo, ownerName, brand, model, pricePerDay, mileage, color, description } = req.body;
+    
     if (req.user.role !== "CAR_OWNER") {
       return res.status(403).json({ error: "Access denied. CarOwner privileges required." });
     }
 
-    // Ensure at least one price is provided
-    if (![pricePerDay, pricePerMonth, pricePer3Months, pricePer6Months, pricePerYear].some(Boolean)) {
+    if (!pricePerDay) {
       return res.status(400).json({ error: "At least one price must be provided." });
     }
 
-    // Create car (set `isApproved` to false by default until admin approves)
+    // Get uploaded image filenames
+    const imageUrls = req.files.map(file => `/uploads/cars/${file.filename}`);
+
     const car = await prisma.car.create({
       data: {
         ownerId,
@@ -43,16 +25,12 @@ export const createCar = async (req, res) => {
         ownerName,
         brand,
         model,
-        images,
+        images: imageUrls, // Store array of images
         pricePerDay,
-        pricePerMonth,
-        pricePer3Months,
-        pricePer6Months,
-        pricePerYear,
         mileage,
         color,
         description,
-        isApproved: false, // Admin verification required
+        isApproved: false,
       },
     });
 
@@ -63,14 +41,10 @@ export const createCar = async (req, res) => {
   }
 };
 
-/**
- * ✅ Get car details by ID
- */
+// Get a single car by ID
 export const getCarById = async (req, res) => {
   try {
     const { id } = req.params;
-
-    // Fetch car by ID
     const car = await prisma.car.findUnique({ where: { id: parseInt(id) } });
 
     if (!car) {
@@ -83,29 +57,26 @@ export const getCarById = async (req, res) => {
     res.status(500).json({ error: "Error fetching car." });
   }
 };
-// get all cars
-export const getAllCars = async (req, res) =>{
-  try{
+
+// Get all cars
+export const getAllCars = async (req, res) => {
+  try {
     const cars = await prisma.car.findMany();
     res.json(cars);
-  }catch(error){
+  } catch (error) {
     console.log(error);
-    res.status(500).json({error: "Error fetching  cars"});
+    res.status(500).json({ error: "Error fetching cars" });
   }
-}
-/**
- * ✅ Admin only: Verify the car
- */
+};
+
+// Verify car (Admin only)
 export const verifyCar = async (req, res) => {
   try {
     const { id } = req.params;
-
-    // Admin verification check
     if (req.user.role !== "ADMIN") {
       return res.status(403).json({ error: "Access denied. Admin privileges required." });
     }
 
-    // Verify the car (approve)
     const car = await prisma.car.update({
       where: { id: parseInt(id) },
       data: { isApproved: true },
@@ -118,33 +89,30 @@ export const verifyCar = async (req, res) => {
   }
 };
 
-/**
- * ✅ Admin only: Update car details
- */
+// Update car details
 export const updateCar = async (req, res) => {
   try {
     const { id } = req.params;
-    const {
-      registrationNo,
-      ownerName,
-      brand,
-      model,
-      pricePerDay,
-      pricePerMonth,
-      pricePer3Months,
-      pricePer6Months,
-      pricePerYear,
-      mileage,
-      color,
-      description,
-    } = req.body;
+    const { registrationNo, ownerName, brand, model, pricePerDay, mileage, color, description } = req.body;
 
-    // Admin verification check
-    if (req.user.role !== "ADMIN") {
-      return res.status(403).json({ error: "Access denied. Admin privileges required." });
+    if (req.user.role !== "ADMIN" && req.user.role !== "CAR_OWNER") {
+      return res.status(403).json({ error: "Access denied." });
     }
 
-    // Update car
+    // Handle new image uploads if provided
+    let imageUrls = req.files?.map(file => `/uploads/cars/${file.filename}`) || [];
+
+    const existingCar = await prisma.car.findUnique({ where: { id: parseInt(id) } });
+
+    if (!existingCar) {
+      return res.status(404).json({ error: "Car not found" });
+    }
+
+    // If no new images are uploaded, keep the old ones
+    if (imageUrls.length === 0) {
+      imageUrls = existingCar.images;
+    }
+
     const car = await prisma.car.update({
       where: { id: parseInt(id) },
       data: {
@@ -153,13 +121,10 @@ export const updateCar = async (req, res) => {
         brand,
         model,
         pricePerDay,
-        pricePerMonth,
-        pricePer3Months,
-        pricePer6Months,
-        pricePerYear,
         mileage,
         color,
         description,
+        images: imageUrls, // Update images
       },
     });
 
@@ -170,23 +135,19 @@ export const updateCar = async (req, res) => {
   }
 };
 
-/**
- * ✅ Admin only: Update car hire status
- */
+// Update car hire status
 export const updateCarStatus = async (req, res) => {
   try {
     const { id } = req.params;
     const { isHired } = req.body;
 
-    // Admin verification check
     if (req.user.role !== "ADMIN") {
       return res.status(403).json({ error: "Access denied. Admin privileges required." });
     }
 
-    // Update car status
     const car = await prisma.car.update({
       where: { id: parseInt(id) },
-      data: { isHired : true},
+      data: { isHired: isHired },
     });
 
     res.json({ car, message: `Car hire status updated to ${isHired ? "hired" : "available"}.` });
@@ -196,8 +157,9 @@ export const updateCarStatus = async (req, res) => {
   }
 };
 
-export const deleteCar  = async (req, res) =>{
-  try{
+// Delete car
+export const deleteCar = async (req, res) => {
+  try {
     const { id } = req.params;
 
     await prisma.car.delete({
@@ -205,9 +167,8 @@ export const deleteCar  = async (req, res) =>{
     });
 
     res.json({ message: "Car deleted successfully" });
-
-  }catch(error){
+  } catch (error) {
     console.log(error);
-    res.status(500).json({error: "Error deleting car"})
+    res.status(500).json({ error: "Error deleting car" });
   }
-}
+};

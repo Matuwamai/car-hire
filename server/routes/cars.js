@@ -1,32 +1,23 @@
 import express from "express";
-import { authenticate, authorizeRoles } from "../middleware/auth.js";
 import {
   createCar,
+  getAllCars,
   getCarById,
   verifyCar,
   updateCar,
-  getAllCars,
-  deleteCar,
   updateCarStatus,
+  deleteCar
 } from "../controllers/cars.js";
+import upload from "../middlewares/upload.js";
+import { authenticate, authorizeRoles } from "../middlewares/auth.js";
 
 const router = express.Router();
-
-// Route for creating a car (Admin only)
-router.post("/", authenticate, authorizeRoles(["CAR_OWNER"]), createCar);
-
-// Route for getting car details by ID
-router.get("/:id", getCarById);
-router.get("/", authenticate, getAllCars)
-
-// Route for verifying a car (Admin only)
-router.patch("/verify/:id", authenticate, authorizeRoles(["ADMIN"]), verifyCar);
-
-// Route for updating car details (Admin only)
-router.put("/:id", authenticate, authorizeRoles(["ADMIN"]), updateCar);
-
-// Route for updating car hire status (Admin only)
-router.patch("/status/:id", authenticate, authorizeRoles(["ADMIN"]), updateCarStatus);
-router.delete("/:id", authenticate, authorizeRoles(["ADMIN"]), deleteCar)
+router.post("/", authenticate, authorizeRoles("CAR_OWNER"), upload.array("images", 5), createCar);
+router.get("/", authenticate, getAllCars);
+router.get("/:id", authenticate, getCarById);
+router.patch("/:id", authenticate, authorizeRoles(["CAR_OWNER", "ADMIN"]), upload.array("images", 5), updateCar);
+router.patch("/verify/:id", authenticate, authorizeRoles("ADMIN"), verifyCar);
+router.patch("/status/:id", authenticate, authorizeRoles("ADMIN"), updateCarStatus);
+router.delete("/:id", authenticate, authorizeRoles(["CAR_OWNER", "ADMIN"]), deleteCar);
 
 export default router;

@@ -62,7 +62,7 @@ export const createBooking = async (req, res) => {
 export const getAllBookings = async (req, res) => {
   try {
     const bookings = await prisma.booking.findMany({
-      include: { car: true, organization: true, period: true },
+      include: { car: true, organization: true },
     });
     res.status(200).json(bookings);
   } catch (error) {

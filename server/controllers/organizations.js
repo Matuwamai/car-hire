@@ -1,20 +1,61 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
+
 export const getAllOrganizations = async (req, res) => {
   try {
-    const organizations = await prisma.organization.findMany();
+    const organizations = await prisma.organization.findMany({
+      include: {
+        user: { 
+          select: { 
+            id: true, 
+            name: true , // Alias to avoid conflict
+            email: true, 
+            profileImage: true, 
+            createdAt: true, 
+            role: true 
+          } 
+        },
+      },
+    });
     res.json(organizations);
   } catch (error) {
+    console.error("Error fetching organizations:", error);
     res.status(500).json({ error: "Error fetching organizations" });
   }
 };
+
+
 export const getOrganizationById = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     if (isNaN(id)) {
       return res.status(400).json({ error: "Invalid ID format" });
     }
-    const organization = await prisma.organization.findUnique({ where: { id } });
+
+    const organization = await prisma.organization.findUnique({
+      where: { id },
+      include: {
+        user: { 
+          select: { 
+            id: true, 
+            name: true , // Alias to avoid conflict
+            email: true, 
+            profileImage: true, 
+            createdAt: true, 
+            role: true 
+          } 
+        },
+        bookings:{
+          select:{
+            id : true,
+            createdAt: true,
+            startDate:true,
+            endDate:true,
+            totalPrice:true
+          }
+        }
+      },
+    });
 
     if (!organization) {
       return res.status(404).json({ error: "Organization not found" });
@@ -25,6 +66,7 @@ export const getOrganizationById = async (req, res) => {
     res.status(500).json({ error: "Error fetching organization" });
   }
 };
+
 export const updateOrganization = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10); 

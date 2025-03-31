@@ -5,7 +5,7 @@ import {
   updateCarOwner,
   deleteCarOwner,
 } from "../controllers/carOwner.js";
-import { authenticate, authorizeRoles } from "../middleware/auth.js";
+import { authenticate, authorizeRoles } from "../middlewares/auth.js";
 
 
 const router = express.Router();

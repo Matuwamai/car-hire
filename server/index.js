@@ -17,7 +17,7 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cors());
-
+app.use("/uploads", express.static("uploads"));
 // Routes
 app.use("/api/users", usersRoutes);
 app.use("/api/carowners", carOwnerRoutes);

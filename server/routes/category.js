@@ -6,7 +6,7 @@ import {
   updateCategory,
   deleteCategory,
 } from "../controllers/carCategory.js";
-import { authenticate, authorizeRoles } from "../middleware/auth.js"; // Import middleware
+import { authenticate, authorizeRoles } from "../middlewares/auth.js"; // Import middleware
 
 const router = express.Router();
 
