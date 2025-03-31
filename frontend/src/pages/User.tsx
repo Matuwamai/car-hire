@@ -64,7 +64,7 @@ const Users: React.FC = () => {
                   <td className="p-3">{user.name}</td>
                   <td className="p-3">{user.email}</td>
                   <td className="p-3">
-                    <span className="px-3 py-1 w-20 rounded-lg text-white text-sm font-semibold" 
+                    <span className="px-3 py-1 w-20 rounded-lg text-blue-600 text-sm font-semibold" 
                       style={{
                         backgroundColor:
                           user.role === "ADMIN"

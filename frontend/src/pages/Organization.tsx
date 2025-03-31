@@ -51,13 +51,11 @@ const Organizations = () => {
 
       if (!response.ok) throw new Error("Failed to verify organization");
 
-      fetchOrganizations(); // Refresh list after verification
+      fetchOrganizations(); 
     } catch (err) {
       alert(err.message);
     }
   };
-
-  // ✅ Function to delete organization
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this organization?")) return;
 

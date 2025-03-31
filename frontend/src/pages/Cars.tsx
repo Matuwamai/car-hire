@@ -6,11 +6,9 @@ const Cars = () => {
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
   useEffect(() => {
     fetchCars();
   }, []);
-
   const fetchCars = async () => {
     try {
       const response = await fetch("http://localhost:5000/api/cars", {
@@ -20,7 +18,6 @@ const Cars = () => {
           Authorization: `Bearer ${user?.token}`,
         },
       });
-
       if (!response.ok) throw new Error("Failed to fetch cars");
 
       const data = await response.json();
@@ -116,8 +113,8 @@ const Cars = () => {
 
             {/* Pricing */}
             <div className="mt-2">
-              <p className="text-sm text-gray-500">Daily: ${car.pricePerDay}</p>
-              <p className="text-sm text-gray-500">Monthly: ${car.pricePerMonth}</p>
+              <p className="text-sm text-gray-500">Daily: Ksh{car.pricePerDay}</p>
+              <p className="text-sm text-gray-500">Monthly: Ksh{car.pricePerMonth}</p>
             </div>
 
             {/* Verification Status */}
