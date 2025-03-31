@@ -87,7 +87,7 @@ const Categories = () => {
               <td className="border p-2 space-x-2 flex flex-row">
                 {/* View Button (Visible to Everyone) */}
                 <button
-                  onClick={() => navigate(`/categories/${category.id}`)}
+                  onClick={() => navigate(`/category/${category.id}`)}
                   className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
                 >
                   View
