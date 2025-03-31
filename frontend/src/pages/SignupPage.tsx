@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Alert } from "@/components/ui/alert";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select"; // Using ShadCN UI
-import { redirect, useNavigate } from "react-router-dom";
+import { Link, redirect, useNavigate } from "react-router-dom";
 
 const SignupPage = () => {
   const [role, setRole] = useState("");
@@ -21,7 +21,7 @@ const SignupPage = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
-
+  const navigate = useNavigate();
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -36,7 +36,7 @@ const SignupPage = () => {
     setError("");
     setSuccess("");
     setLoading(true);
-    const navigate = useNavigate
+    
 
     if (!formData.name || !formData.email || !formData.password || !role) {
       setError("All required fields must be filled.");
@@ -60,6 +60,7 @@ const SignupPage = () => {
         }
   
         setSuccess("Account created successfully!");
+        navigate("/login")
       } catch (err) {
         setError(err.message);
       } finally {
@@ -73,7 +74,7 @@ const SignupPage = () => {
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <Card className="w-full max-w-md shadow-lg p-6 bg-white rounded-2xl">
         <CardHeader>
-          <h2 className="text-xl font-semibold text-gray-700 text-center">Sign Up</h2>
+          <h2 className="text-xl font-bold text-blue-600 text-center">Sign Up</h2>
         </CardHeader>
         <CardContent>
           {error && <Alert className="text-red-600 flex font-bold mb-2">{error}</Alert>}
@@ -82,8 +83,6 @@ const SignupPage = () => {
             <Input name="name" placeholder="Full Name" onChange={handleChange} required />
             <Input type="email" name="email" placeholder="Email" onChange={handleChange} required />
             <Input type="password" name="password" placeholder="Password" onChange={handleChange} required />
-
-            {/* Optimized Select Component */}
             <Select onValueChange={handleRoleChange} required>
               <SelectTrigger className="w-full border p-2 rounded-md bg-white shadow-sm">
                 <SelectValue placeholder="Select Role" />
@@ -118,7 +117,14 @@ const SignupPage = () => {
             </Button>
           </form>
         </CardContent>
+        <p className="text-sm text-center mt-4">
+          Aready have an account?{" "}
+          <Link to="/login" className="text-blue-600 hover:underline">
+            Login
+          </Link>
+        </p>
       </Card>
+      
     </div>
   );
 };

@@ -1,13 +1,13 @@
 import React, { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/authContext"; 
+import { useNavigate, Link } from "react-router-dom";
+import { AuthContext } from "../context/authContext";
 
 const Login: React.FC = () => {
   const authContext = useContext(AuthContext);
   if (!authContext) {
     throw new Error("AuthContext must be used within an AuthProvider");
   }
-  const { login } = authContext; // Now login is properly typed
+  const { login } = authContext;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,13 +19,25 @@ const Login: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    setLoading(true);
+    if (!email || !password) {
+      setError("Email and password are required.");
+      return;
+    }
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setError("Please enter a valid email.");
+      return;
+    }
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
 
+    setLoading(true);
     try {
-     
-      login(email, password);
+      await login(email, password);
+      navigate("/dashboard");
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || "Invalid email or password.");
     } finally {
       setLoading(false);
     }
@@ -35,7 +47,8 @@ const Login: React.FC = () => {
     <div className="flex justify-center items-center h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-lg w-96">
         <h2 className="text-2xl font-bold text-center text-blue-600 mb-4">Login</h2>
-        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+        {error && <p className="text-red-500 flex font-bold text-sm text-center mb-2">{error}</p>}
+
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
             type="email"
@@ -56,11 +69,19 @@ const Login: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700"
+            className={`p-2 rounded-lg text-white ${
+              loading ? "bg-gray-500 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+            }`}
           >
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
+        <p className="text-sm text-center mt-4">
+          Don't have an account?{" "}
+          <Link to="/signup" className="text-blue-600 hover:underline">
+            Sign up
+          </Link>
+        </p>
       </div>
     </div>
   );

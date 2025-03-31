@@ -18,9 +18,8 @@ const Navbar: React.FC = () => {
 
   if (loading) {
     return (
-      <nav className="bg-none text-blue-900 flex justify-between m-2 border-3 border-blue-600 rounded-sm items-center p-4 shadow-sm">
+      <nav className="bg-none text-blue-600 flex justify-between m-2 border-3 border-blue-600 rounded-sm items-center p-4 shadow-sm">
         <div className="flex items-center gap-3">
-          <img src="/logo.png" alt="Logo" className="h-12 w-12 object-contain" />
           <h1 className="text-xl font-bold">Loading...</h1>
         </div>
         <div className="flex items-center gap-3">
@@ -32,15 +31,14 @@ const Navbar: React.FC = () => {
   }
 
   return (
-    <nav className="bg-none text-blue-900 flex justify-between m-2 border-3 border-blue-600 rounded-sm items-center p-4 shadow-sm">
+    <nav className="bg-none text-blue-600 flex justify-between m-2 border-3 border-blue-600 rounded-sm items-center p-4 shadow-sm">
       <div className="flex items-center gap-3">
-        <img src="/logo.png" alt="Logo" className="h-12 w-12 object-contain" />
         {user?.role === "ADMIN" && <h1 className="text-xl font-bold">ADMIN DASHBOARD</h1>}
         {user?.role === "ORGANIZATION" && <h1 className="text-xl font-bold">ORGANIZATION DASHBOARD</h1>}
         {user?.role === "CAR_OWNER" && <h1 className="text-xl font-bold">CAR OWNERS DASHBOARD</h1>}
       </div>
       <div className="flex items-center gap-3">
-        <span className="font-semibold">{user?.id || "Guest"}</span>
+        <span className="font-semibold">{user?.name || "Guest"}</span>
         <FaUserCircle size={24} />
       </div>
     </nav>
