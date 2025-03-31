@@ -2,8 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { useContext } from "react";
-import { AuthContext } from "@/context/authContext"; // Import AuthContext
-
+import { AuthContext } from "@/context/authContext"; 
 interface CategoryFormData {
   name: string;
   description: string;
@@ -27,7 +26,6 @@ const CreateCategory = () => {
       setError("Unauthorized. Please log in.");
       return;
     }
-
     try {
       setLoading(true);
       setError(null);
@@ -43,7 +41,6 @@ const CreateCategory = () => {
           },
         }
       );
-
       setSuccess("Category created successfully!");
       reset();
     } catch (error: any) {
@@ -52,7 +49,6 @@ const CreateCategory = () => {
       setLoading(false);
     }
   };
-
   return (
     <div className="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
       <h2 className="text-2xl font-bold text-gray-700 mb-4">Create New Category</h2>
@@ -61,7 +57,6 @@ const CreateCategory = () => {
       {success && <p className="bg-green-100 text-green-600 px-4 py-2 rounded">{success}</p>}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        {/* Name Field */}
         <div>
           <label className="block text-sm font-medium text-gray-700">Category Name</label>
           <input
@@ -71,8 +66,6 @@ const CreateCategory = () => {
             placeholder="Enter category name"
           />
         </div>
-
-        {/* Description Field */}
         <div>
           <label className="block text-sm font-medium text-gray-700">Description</label>
           <textarea
@@ -81,8 +74,6 @@ const CreateCategory = () => {
             placeholder="Enter category description"
           ></textarea>
         </div>
-
-        {/* Submit Button */}
         <button
           type="submit"
           disabled={loading}

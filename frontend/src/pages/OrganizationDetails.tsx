@@ -44,7 +44,6 @@ const OrganizationDetail = () => {
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white mt-5 border-1 border-gray-600 shadow-lg rounded-lg">
-      {/* Organization Header */}
       <div className="flex items-center gap-4">
         <img
           src={organization?.user?.profileImage || "/default-avatar.png"}
@@ -59,8 +58,6 @@ const OrganizationDetail = () => {
           <p className="text-sm text-gray-500">Joined: {new Date(organization?.user?.createdAt).toLocaleDateString()}</p>
         </div>
       </div>
-
-      {/* Verification Status */}
       <div className="mt-4">
         {organization?.isVerified ? (
           <p className="text-green-600 font-bold">✔ Verified</p>
@@ -73,8 +70,6 @@ const OrganizationDetail = () => {
           </button>
         )}
       </div>
-
-      {/* Booking History */}
       <div className="mt-6">
         <h3 className="text-xl font-semibold mb-3">Booking History</h3>
         {organization?.bookings?.length > 0 ? (

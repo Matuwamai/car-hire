@@ -7,9 +7,6 @@ import {
   verifyOrganization 
 } from "../controllers/organizations.js";
 import { authenticate, authorizeRoles } from "../middlewares/auth.js";
-
-
-
 const router = express.Router();
 router.get("/", authenticate, authorizeRoles(["ADMIN"]), getAllOrganizations);
 router.get("/:id",authenticate,authorizeRoles(["ADMIN", "ORGANIZATION"]), getOrganizationById);

@@ -8,7 +8,6 @@ interface Category {
   name: string;
   description: string;
 }
-
 const Categories = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
@@ -28,13 +27,11 @@ const Categories = () => {
         setError("Unauthorized. Please log in.");
         return;
       }
-
       try {
         setLoading(true);
         const response = await axios.get("http://localhost:5000/api/categories", {
           headers: { Authorization: `Bearer ${user.token}` },
         });
-
         setCategories(response.data);
       } catch (error: any) {
         setError("Failed to fetch categories.");
@@ -45,8 +42,6 @@ const Categories = () => {
 
     fetchCategories();
   }, [user?.token]);
-
-  // Delete Category (Only Admin)
   const handleDelete = async (id: number) => {
     if (!user?.token) {
       setError("Unauthorized. Please log in.");
@@ -85,15 +80,12 @@ const Categories = () => {
               <td className="border p-2">{category.name}</td>
               <td className="border p-2">{category.description}</td>
               <td className="border p-2 space-x-2 flex flex-row">
-                {/* View Button (Visible to Everyone) */}
                 <button
                   onClick={() => navigate(`/category/${category.id}`)}
                   className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
                 >
                   View
                 </button>
-
-                {/* Update & Delete Only for Admin */}
                 {user?.role === "ADMIN" && (
                   <>
                     <button

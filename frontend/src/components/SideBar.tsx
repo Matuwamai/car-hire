@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import {
   FaSignOutAlt, FaBars, FaTimes, FaUsers, FaCar,  FaPlusCircle, FaHome, FaBook, FaUserCircle
 } from "react-icons/fa";  
-import { MdCategory } from "react-icons/md"; // Category icon
+import { MdCategory } from "react-icons/md"; 
 import { Link, useNavigate } from "react-router-dom";
 
 interface SidebarProps {
@@ -33,8 +33,6 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
       alert("An error occurred while logging out.");
     }
   };
-
-  // Define sidebar menu items based on role
   const getMenuItems = () => {
     switch (user.role) {
       case "ADMIN":

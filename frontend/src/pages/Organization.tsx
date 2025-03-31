@@ -15,7 +15,7 @@ const Organizations = () => {
       setError("User not authenticated. Please log in.");
       setLoading(false);
     }
-  }, [user?.token]); // Dependency on token
+  }, [user?.token]);
 
   const fetchOrganizations = async () => {
     try {
@@ -37,8 +37,6 @@ const Organizations = () => {
       setLoading(false);
     }
   };
-  
-  // ✅ Function to verify organization
   const handleVerify = async (id) => {
     try {
       const response = await fetch(`http://localhost:5000/api/organizations/verify/${id}`, {
@@ -81,8 +79,6 @@ const Organizations = () => {
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Organizations</h2>
-
-      {/* Organizations Table */}
       <div className="overflow-x-auto">
         <table className="w-full border-collapse border border-gray-300">
           <thead>

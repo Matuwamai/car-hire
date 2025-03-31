@@ -57,10 +57,10 @@ model CarCategory {
 model Car {
   id              Int         @id @default(autoincrement())
   owner           CarOwner    @relation(fields: [ownerId], references: [id])
-  ownerId         Int
+  ownerId         Int          @unique
   category        CarCategory @relation(fields: [categoryId], references: [id])
   categoryId      Int
-  images          Json 
+  images          String
   registrationNo  String      @unique
   ownerName       String
   brand           String

@@ -9,8 +9,6 @@ import {
 import {  authenticate, authorizeRoles } from "../middlewares/auth.js";
 
 const router = express.Router();
-
-// Protect all routes with admin authentication
 router.post("/", authenticate, authorizeRoles(["ORGANIZATION"]), createBooking);
 router.get("/", authenticate, authorizeRoles(["ADMIN"]), getAllBookings);
 router.get("/:id", authenticate, authorizeRoles(["ADMIN", "ORGANIZATION"]), getBookingById);

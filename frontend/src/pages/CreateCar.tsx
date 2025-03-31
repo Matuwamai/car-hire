@@ -1,12 +1,16 @@
-import { useState, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { AuthContext } from "@/context/authContext";
+
+interface Category {
+  id: string;
+  name: string;
+}
+
 interface CarFormData {
-  ownerId: string;
   categoryId: string;
   registrationNo: string;
-  ownerName: string;
   brand: string;
   model: string;
   images: FileList;
@@ -15,42 +19,62 @@ interface CarFormData {
   color: string;
   description: string;
 }
-
 const CreateCar = () => {
   const { register, handleSubmit, reset } = useForm<CarFormData>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const authContext = useContext(AuthContext);
 
-  // Handle form submission
+  if (!authContext) {
+    return <p>Auth context not available</p>;
+  }
+
+  const { user } = authContext;
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/categories", {
+          headers: { Authorization: `Bearer ${user?.token}` },
+        });
+        setCategories(response.data);
+      } catch (error) {
+        setError("Failed to fetch categories.");
+      }
+    };
+
+    fetchCategories();
+  }, [user?.token]);
   const onSubmit = async (data: CarFormData) => {
+    if (!user) {
+      setError("Unauthorized. Please log in.");
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
 
       const formData = new FormData();
-      formData.append("ownerId", data.ownerId);
+      formData.append("ownerId", user.id); 
+      formData.append("ownerName", user.name); 
       formData.append("categoryId", data.categoryId);
       formData.append("registrationNo", data.registrationNo);
-      formData.append("ownerName", data.ownerName);
       formData.append("brand", data.brand);
       formData.append("model", data.model);
       formData.append("pricePerDay", String(data.pricePerDay));
       formData.append("mileage", String(data.mileage));
       formData.append("color", data.color);
       formData.append("description", data.description);
-
-      // Append multiple images
       for (const file of Array.from(data.images)) {
         formData.append("images", file);
       }
 
-       const { user } = useContext(AuthContext);
-
       await axios.post("http://localhost:5000/api/cars", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${user?.token}`,
+          Authorization: `Bearer ${user.token}`,
         },
       });
 
@@ -64,7 +88,6 @@ const CreateCar = () => {
     }
   };
 
-  // Handle image previews
   const handleImagePreview = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const filesArray = Array.from(event.target.files).map((file) =>
@@ -75,11 +98,23 @@ const CreateCar = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white border-1 border-gray-700 shadow-md rounded-md">
+    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white border border-gray-700 shadow-md rounded-md">
       <h2 className="text-2xl font-bold mb-4 text-blue-600">Add New Car</h2>
       {error && <p className="text-red-500">{error}</p>}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium">Category</label>
+          <select {...register("categoryId", { required: true })} className="w-full border px-3 py-2 rounded-md">
+            <option value="">Select Category</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div>
           <label className="block text-sm font-medium">Registration No</label>
           <input
@@ -88,16 +123,6 @@ const CreateCar = () => {
             className="w-full border px-3 py-2 rounded-md outline-blue-600"
           />
         </div>
-
-        <div>
-          <label className="block text-sm font-medium">Owner Name</label>
-          <input
-            type="text"
-            {...register("ownerName", { required: true })}
-            className="w-full border px-3 py-2 rounded-md outline-blue-600"
-          />
-        </div>
-
         <div>
           <label className="block text-sm font-medium">Brand</label>
           <input
@@ -106,7 +131,6 @@ const CreateCar = () => {
             className="w-full border px-3 py-2 rounded-md outline-blue-600"
           />
         </div>
-
         <div>
           <label className="block text-sm font-medium">Model</label>
           <input
@@ -115,7 +139,6 @@ const CreateCar = () => {
             className="w-full border px-3 py-2 rounded-md outline-blue-600"
           />
         </div>
-
         <div>
           <label className="block text-sm font-medium">Price Per Day ($)</label>
           <input
@@ -124,7 +147,6 @@ const CreateCar = () => {
             className="w-full border px-3 py-2 rounded-md outline-blue-600"
           />
         </div>
-
         <div>
           <label className="block text-sm font-medium">Mileage</label>
           <input
@@ -133,16 +155,14 @@ const CreateCar = () => {
             className="w-full border px-3 py-2 rounded-md outline-blue-600"
           />
         </div>
-
         <div>
-          <label className="block text-sm font-medium outline-blue-600">Color</label>
+          <label className="block text-sm font-medium">Color</label>
           <input
             type="text"
             {...register("color", { required: true })}
             className="w-full border px-3 py-2 rounded-md outline-blue-600"
           />
         </div>
-
         <div>
           <label className="block text-sm font-medium">Description</label>
           <textarea
@@ -150,8 +170,6 @@ const CreateCar = () => {
             className="w-full border px-3 py-2 rounded-md outline-blue-600"
           ></textarea>
         </div>
-
-        {/* Image Upload */}
         <div>
           <label className="block text-sm font-medium">Upload Images</label>
           <input
@@ -163,8 +181,6 @@ const CreateCar = () => {
             onChange={handleImagePreview}
           />
         </div>
-
-        {/* Image Preview */}
         {previewImages.length > 0 && (
           <div className="grid grid-cols-3 gap-2">
             {previewImages.map((image, index) => (
@@ -172,8 +188,6 @@ const CreateCar = () => {
             ))}
           </div>
         )}
-
-        {/* Submit Button */}
         <button
           type="submit"
           disabled={loading}

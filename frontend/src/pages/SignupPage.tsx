@@ -96,7 +96,6 @@ const SignupPage = () => {
                 </SelectItem>
               </SelectContent>
             </Select>
-
             {role === "CAR_OWNER" && (
               <>
                 <Input name="phone" placeholder="Phone Number" onChange={handleChange} required />
@@ -104,14 +103,12 @@ const SignupPage = () => {
                 <Input name="idNumber" placeholder="ID Number" onChange={handleChange} required />
               </>
             )}
-
             {role === "ORGANIZATION" && (
               <>
                 <Input name="registrationNo" placeholder="Registration Number" onChange={handleChange} required />
                 <Input name="license" placeholder="License" onChange={handleChange} required />
               </>
             )}
-
             <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white" disabled={loading}>
               {loading ? "Signing Up..." : "Sign Up"}
             </Button>

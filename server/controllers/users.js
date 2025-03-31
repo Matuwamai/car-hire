@@ -1,11 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
-
-
 const prisma = new PrismaClient();
-
-
 export const createUser = async (req, res) => {
   try {
     const {
@@ -20,22 +16,14 @@ export const createUser = async (req, res) => {
       registrationNo,
       license,
     } = req.body;
-
-    // ✅ Validate required fields
     if (!role || !email || !password) {
       return res.status(400).json({ error: "Role, email, and password are required" });
     }
-
-    // ✅ Check if email already exists
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
       return res.status(400).json({ error: "Email is already in use. Please use a different email." });
     }
-
-    // ✅ Hash password before saving
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    // ✅ Create user
     const user = await prisma.user.create({
       data: {
         email,
@@ -49,7 +37,6 @@ export const createUser = async (req, res) => {
     let userDetails;
 
     if (role === "CAR_OWNER") {
-      // ✅ Check if ID number already exists
       const existingCarOwner = await prisma.carOwner.findUnique({ where: { idNumber } });
       if (existingCarOwner) {
         return res.status(400).json({ error: "ID Number is already in use. Please use a different one." });
@@ -64,7 +51,6 @@ export const createUser = async (req, res) => {
         },
       });
     } else if (role === "ORGANIZATION") {
-      // ✅ Check if registration number already exists
       const existingOrg = await prisma.organization.findUnique({ where: { registrationNo } });
       if (existingOrg) {
         return res.status(400).json({ error: "Registration number already exists. Please use a different one." });
@@ -98,7 +84,7 @@ export const loginUser = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(401).json({ error: "Invalid credentials" });
 
-    const token = jwt.sign({ id: user.id, role:user.role }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: user.id, role:user.role, name: user.name}, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
 

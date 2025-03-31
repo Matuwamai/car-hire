@@ -55,7 +55,7 @@ CREATE TABLE `Car` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `ownerId` INTEGER NOT NULL,
     `categoryId` INTEGER NOT NULL,
-    `images` JSON NOT NULL,
+    `images` VARCHAR(191) NOT NULL,
     `registrationNo` VARCHAR(191) NOT NULL,
     `ownerName` VARCHAR(191) NOT NULL,
     `brand` VARCHAR(191) NOT NULL,
@@ -68,6 +68,7 @@ CREATE TABLE `Car` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `isHired` BOOLEAN NOT NULL DEFAULT false,
 
+    UNIQUE INDEX `Car_ownerId_key`(`ownerId`),
     UNIQUE INDEX `Car_registrationNo_key`(`registrationNo`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -77,7 +78,6 @@ CREATE TABLE `Booking` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `carId` INTEGER NOT NULL,
     `organizationId` INTEGER NOT NULL,
-    `periodId` INTEGER NOT NULL,
     `totalPrice` DOUBLE NOT NULL,
     `status` VARCHAR(191) NOT NULL DEFAULT 'pending',
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),

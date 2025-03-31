@@ -2,7 +2,7 @@ import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode"; 
 interface AuthContextType {
-  user: { id: string; role: string; token: string } | null;
+  user: { id: string; role: string; token: string; name: string} | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
 }
@@ -10,7 +10,7 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const userFromLocalstorage = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") ): null
-  const [user, setUser] = useState<{ id: string; role: string; token: string } | null>(userFromLocalstorage);
+  const [user, setUser] = useState<{ id: string; role: string; token: string; name: string } | null>(userFromLocalstorage);
 
   const BASE_URL =` http://localhost:5000/api`
   const login = async (email: string, password: string) => {
@@ -23,6 +23,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const userData = {
           id: decodedToken.id, 
           role: decodedToken.role, 
+          name:  decodedToken.name,
           token
         };
 

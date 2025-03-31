@@ -1,8 +1,5 @@
 import jwt from "jsonwebtoken";
 
-/**
- * ✅ Authenticate any user (Admin, Car Owners, Organizations)
- */
 export const authenticate = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
@@ -11,20 +8,17 @@ export const authenticate = (req, res, next) => {
     }
 
     const token = authHeader.split(" ")[1];
-    console.log("🔍 Received Token:", token); // ✅ Log the received token
+    console.log("🔍 Received Token:", token); 
 
     if (!token) {
       return res.status(401).json({ error: "Unauthorized. Token is missing." });
     }
-
-    // Verify the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("✅ Decoded Token:", decoded); // ✅ Log the decoded token
-
+    console.log("✅ Decoded Token:", decoded); 
     req.user = decoded; 
     next();
   } catch (error) {
-    console.error("❌ Authentication error:", error.message);
+    console.error(" Authentication error:", error.message);
     return res.status(401).json({ error: "Invalid or expired token." });
   }
 };

@@ -1,9 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
-
-
-
 export const createBooking = async (req, res) => {
   try {
     const { carId, organizationId,  startDate, endDate } = req.body;
@@ -57,8 +54,6 @@ export const createBooking = async (req, res) => {
     res.status(500).json({ error: error.message || "Error creating booking" });
   }
 };
-
-
 export const getAllBookings = async (req, res) => {
   try {
     const bookings = await prisma.booking.findMany({
@@ -69,8 +64,6 @@ export const getAllBookings = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
-
 export const getBookingById = async (req, res) => {
   try {
     const { id } = req.params;

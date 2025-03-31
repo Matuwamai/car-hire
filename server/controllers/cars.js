@@ -1,47 +1,42 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
-
-// Create a new car with multiple images
 export const createCar = async (req, res) => {
   try {
-    const { ownerId, categoryId, registrationNo, ownerName, brand, model, pricePerDay, mileage, color, description } = req.body;
-    
-    if (req.user.role !== "CAR_OWNER") {
-      return res.status(403).json({ error: "Access denied. CarOwner privileges required." });
+    const { categoryId, registrationNo, brand, model, pricePerDay, mileage, color, description } = req.body;
+    const ownerId = req.user?.id; 
+    if (!ownerId) {
+      return res.status(400).json({ message: "Owner ID is required" });
     }
+    const imageUrls = req.files ? req.files.map(file => file.path) : [];
+    const ownerExists = await prisma.carOwner.findUnique({
+      where: { id: Number(ownerId) },
+    });
 
-    if (!pricePerDay) {
-      return res.status(400).json({ error: "At least one price must be provided." });
+    if (!ownerExists) {
+      return res.status(400).json({ message: "Owner does not exist" });
     }
-
-    // Get uploaded image filenames
-    const imageUrls = req.files.map(file => `/uploads/cars/${file.filename}`);
-
-    const car = await prisma.car.create({
+    const newCar = await prisma.car.create({
       data: {
-        ownerId,
-        categoryId,
+        ownerId: Number(ownerId),
+        categoryId: Number(categoryId),
         registrationNo,
-        ownerName,
         brand,
         model,
-        images: imageUrls, // Store array of images
-        pricePerDay,
-        mileage,
+        pricePerDay: Number(pricePerDay),
+        mileage: Number(mileage),
         color,
         description,
-        isApproved: false,
+        images: JSON.stringify(imageUrls), 
       },
     });
 
-    res.status(201).json({ car, message: "Car created. Waiting for admin verification." });
+    res.status(201).json(newCar);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error creating car." });
+    console.error("Error creating car:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
-// Get a single car by ID
 export const getCarById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -57,8 +52,6 @@ export const getCarById = async (req, res) => {
     res.status(500).json({ error: "Error fetching car." });
   }
 };
-
-// Get all cars
 export const getAllCars = async (req, res) => {
   try {
     const cars = await prisma.car.findMany();
@@ -68,8 +61,6 @@ export const getAllCars = async (req, res) => {
     res.status(500).json({ error: "Error fetching cars" });
   }
 };
-
-// Verify car (Admin only)
 export const verifyCar = async (req, res) => {
   try {
     const { id } = req.params;
@@ -88,8 +79,6 @@ export const verifyCar = async (req, res) => {
     res.status(500).json({ error: "Error verifying car." });
   }
 };
-
-// Update car details
 export const updateCar = async (req, res) => {
   try {
     const { id } = req.params;
@@ -98,8 +87,6 @@ export const updateCar = async (req, res) => {
     if (req.user.role !== "ADMIN" && req.user.role !== "CAR_OWNER") {
       return res.status(403).json({ error: "Access denied." });
     }
-
-    // Handle new image uploads if provided
     let imageUrls = req.files?.map(file => `/uploads/cars/${file.filename}`) || [];
 
     const existingCar = await prisma.car.findUnique({ where: { id: parseInt(id) } });
@@ -107,8 +94,6 @@ export const updateCar = async (req, res) => {
     if (!existingCar) {
       return res.status(404).json({ error: "Car not found" });
     }
-
-    // If no new images are uploaded, keep the old ones
     if (imageUrls.length === 0) {
       imageUrls = existingCar.images;
     }
@@ -124,7 +109,7 @@ export const updateCar = async (req, res) => {
         mileage,
         color,
         description,
-        images: imageUrls, // Update images
+        images: imageUrls, 
       },
     });
 
@@ -134,8 +119,6 @@ export const updateCar = async (req, res) => {
     res.status(500).json({ error: "Error updating car." });
   }
 };
-
-// Update car hire status
 export const updateCarStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -156,8 +139,6 @@ export const updateCarStatus = async (req, res) => {
     res.status(500).json({ error: "Error updating car status." });
   }
 };
-
-// Delete car
 export const deleteCar = async (req, res) => {
   try {
     const { id } = req.params;

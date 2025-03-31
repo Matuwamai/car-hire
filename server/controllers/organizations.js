@@ -8,7 +8,7 @@ export const getAllOrganizations = async (req, res) => {
         user: { 
           select: { 
             id: true, 
-            name: true , // Alias to avoid conflict
+            name: true ,
             email: true, 
             profileImage: true, 
             createdAt: true, 
@@ -38,7 +38,7 @@ export const getOrganizationById = async (req, res) => {
         user: { 
           select: { 
             id: true, 
-            name: true , // Alias to avoid conflict
+            name: true , 
             email: true, 
             profileImage: true, 
             createdAt: true, 
