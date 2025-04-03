@@ -76,7 +76,7 @@ export const createUser = async (req, res) => {
 
 export const loginUser = async (req, res) => {
   try {
-    console.log(req.body)
+    // console.log(req.body)
     const { email, password } = req.body;
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) return res.status(404).json({ error: "User not found" });
