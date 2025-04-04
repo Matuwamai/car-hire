@@ -1,38 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
-  FaSignOutAlt, FaBars, FaTimes, FaUsers, FaCar,  FaPlusCircle, FaHome, FaBook, FaUserCircle
+  FaSignOutAlt, FaBars, FaTimes, FaUsers, FaCar, FaPlusCircle, FaHome, FaBook, FaUserCircle
 } from "react-icons/fa";  
 import { MdCategory } from "react-icons/md"; 
 import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "@/context/authContext";// <-- import context
 
 interface SidebarProps {
   user: {
     role: "ADMIN" | "CAR_OWNER" | "ORGANIZATION";
   };
 }
+
 const Sidebar: React.FC<SidebarProps> = ({ user }) => {
   const [isOpen, setIsOpen] = useState(false);
-  console.log(user)
   const navigate = useNavigate();
+  const authContext = useContext(AuthContext); // <-- use context
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/users/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-
-      if (response.ok) {
+      if (authContext?.logout) {
+        await authContext.logout(); // <-- use context's logout
         alert("Logged out successfully!");
         navigate("/login");
       } else {
-        alert("Logout failed!");
+        alert("Logout function not found in context.");
       }
     } catch (error) {
       console.error("Logout error:", error);
       alert("An error occurred while logging out.");
     }
   };
+
   const getMenuItems = () => {
     switch (user.role) {
       case "ADMIN":
@@ -67,15 +66,12 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
 
   return (
     <>
-      {/* Mobile Toggle Button */}
       <button
         className="fixed top-4 left-5 z-50 text-white bg-blue-900 p-2 rounded-lg md:hidden"
         onClick={() => setIsOpen(!isOpen)}
       >
         {isOpen ? <FaTimes size={25} /> : <FaBars size={25} />}
       </button>
-
-      {/* Sidebar */}
       <div
         className={`h-screen w-64 bg-blue-600 text-white flex flex-col p-5 fixed top-0 left-0 transform transition-transform duration-300 
           ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 md:relative`}
@@ -92,8 +88,6 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
               {item.icon} {item.label}
             </Link>
           ))}
-          
-          {/* Logout Button */}
           <button
             onClick={handleLogout}
             className="flex items-center gap-3 p-2 hover:bg-red-500 rounded-lg mt-auto"

@@ -88,6 +88,9 @@ const SignupPage = () => {
                 <SelectValue placeholder="Select Role" />
               </SelectTrigger>
               <SelectContent className="w-full bg-white shadow-lg rounded-md mt-1 border">
+              <SelectItem className="px-4 py-2 hover:bg-blue-100 cursor-pointer" value="ADMIN">
+                  ADMIN
+                </SelectItem>
                 <SelectItem className="px-4 py-2 hover:bg-blue-100 cursor-pointer" value="CAR_OWNER">
                   Car Owner
                 </SelectItem>

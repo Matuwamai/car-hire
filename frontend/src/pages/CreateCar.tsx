@@ -13,17 +13,18 @@ interface CarFormData {
   registrationNo: string;
   brand: string;
   model: string;
-  images: FileList;
   pricePerDay: number;
   mileage: number;
   color: string;
   description: string;
 }
+
 const CreateCar = () => {
   const { register, handleSubmit, reset } = useForm<CarFormData>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const authContext = useContext(AuthContext);
 
@@ -32,6 +33,7 @@ const CreateCar = () => {
   }
 
   const { user } = authContext;
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -46,6 +48,18 @@ const CreateCar = () => {
 
     fetchCategories();
   }, [user?.token]);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const fileArray = Array.from(files);
+      setImageFiles(fileArray);
+
+      const previews = fileArray.map((file) => URL.createObjectURL(file));
+      setPreviewImages(previews);
+    }
+  };
+
   const onSubmit = async (data: CarFormData) => {
     if (!user) {
       setError("Unauthorized. Please log in.");
@@ -57,8 +71,8 @@ const CreateCar = () => {
       setError(null);
 
       const formData = new FormData();
-      formData.append("ownerId", user.id); 
-      formData.append("ownerName", user.name); 
+      formData.append("ownerId", String(user.id));
+      formData.append("ownerName", user.name);
       formData.append("categoryId", data.categoryId);
       formData.append("registrationNo", data.registrationNo);
       formData.append("brand", data.brand);
@@ -67,9 +81,10 @@ const CreateCar = () => {
       formData.append("mileage", String(data.mileage));
       formData.append("color", data.color);
       formData.append("description", data.description);
-      for (const file of Array.from(data.images)) {
+
+      imageFiles.forEach((file) => {
         formData.append("images", file);
-      }
+      });
 
       await axios.post("http://localhost:5000/api/cars", formData, {
         headers: {
@@ -80,20 +95,13 @@ const CreateCar = () => {
 
       alert("Car listed successfully!");
       reset();
+      setImageFiles([]);
       setPreviewImages([]);
     } catch (error) {
+      console.error(error);
       setError("Failed to upload car. Please try again.");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleImagePreview = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      const filesArray = Array.from(event.target.files).map((file) =>
-        URL.createObjectURL(file)
-      );
-      setPreviewImages(filesArray);
     }
   };
 
@@ -140,7 +148,7 @@ const CreateCar = () => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium">Price Per Day ($)</label>
+          <label className="block text-sm font-medium">Price Per Day (Ksh)</label>
           <input
             type="number"
             {...register("pricePerDay", { required: true })}
@@ -174,20 +182,21 @@ const CreateCar = () => {
           <label className="block text-sm font-medium">Upload Images</label>
           <input
             type="file"
-            {...register("images")}
             multiple
             accept="image/*"
+            onChange={handleImageChange}
             className="w-full border px-3 py-2 rounded-md outline-blue-600"
-            onChange={handleImagePreview}
           />
         </div>
+
         {previewImages.length > 0 && (
           <div className="grid grid-cols-3 gap-2">
             {previewImages.map((image, index) => (
-              <img key={index} src={image} alt="Preview" className="w-full h-24 object-cover rounded-md" />
+              <img key={index} src={image} alt={`Preview ${index}`} className="w-full h-24 object-cover rounded-md" />
             ))}
           </div>
         )}
+
         <button
           type="submit"
           disabled={loading}
