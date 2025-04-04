@@ -56,8 +56,6 @@ const attachImageUrls = (car) => {
     })),
   };
 };
-
-// GET all cars with image URLs
 export const getAllCars = async (req, res) => {
   try {
     const cars = await prisma.car.findMany({
@@ -73,25 +71,45 @@ export const getAllCars = async (req, res) => {
   }
 };
 
-// GET car by ID with image URLs
 export const getCarById = async (req, res) => {
   try {
+    console.log("Received carId:", req.params.id);
+    const carId = Number(req.params.id);
+    
+    if (isNaN(carId)) {
+      return res.status(400).json({ message: "Invalid car ID" });
+    }
     const car = await prisma.car.findUnique({
-      where: { id: Number(req.params.id) },
+      where: { id: carId },
       include: {
         images: true,
+        bookings: {
+          select: {
+            startDate: true,
+            endDate: true
+          }
+        }
       },
     });
 
-    if (!car) return res.status(404).json({ message: "Car not found" });
+    if (!car) {
+      return res.status(404).json({ message: "Car not found" });
+    }
+    const carWithImages = attachImageUrls(car);
+    const carResponse = {
+      ...carWithImages,
+      bookings: car.isHired ? carWithImages.bookings : undefined
+    };
 
-    res.status(200).json(attachImageUrls(car));
+    res.status(200).json(carResponse);
+
   } catch (error) {
+    console.error("Error fetching car:", error);
     res.status(500).json({ message: "Error fetching car" });
   }
 };
 
-// GET cars by owner ID with image URLs
+
 export const getCarsByOwner = async (req, res) => {
   try {
     const ownerId = Number(req.params.ownerId);
@@ -110,8 +128,6 @@ export const getCarsByOwner = async (req, res) => {
 };
 
 
-
-// VERIFY a car (admin action)
 export const verifyCar = async (req, res) => {
   try {
     const { id } = req.params;
@@ -126,7 +142,6 @@ export const verifyCar = async (req, res) => {
   }
 };
 
-// UPDATE car
 export const updateCar = async (req, res) => {
   try {
     const { id } = req.params;
@@ -154,7 +169,7 @@ export const updateCar = async (req, res) => {
         color,
         description,
         ownerName,
-        images: imageUrls.length > 0 ? imageUrls : undefined, // Only update if images exist
+        images: imageUrls.length > 0 ? imageUrls : undefined,
       },
     });
 

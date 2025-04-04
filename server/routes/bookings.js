@@ -9,7 +9,7 @@ import {
 import {  authenticate, authorizeRoles } from "../middlewares/auth.js";
 
 const router = express.Router();
-router.post("/", authenticate, authorizeRoles(["ORGANIZATION"]), createBooking);
+router.post("/:carId", authenticate, authorizeRoles(["ORGANIZATION"]), createBooking);
 router.get("/", authenticate, authorizeRoles(["ADMIN"]), getAllBookings);
 router.get("/:id", authenticate, authorizeRoles(["ADMIN", "ORGANIZATION"]), getBookingById);
 router.put("/:id", authenticate, authorizeRoles(["ADMIN"]), updateBooking);
