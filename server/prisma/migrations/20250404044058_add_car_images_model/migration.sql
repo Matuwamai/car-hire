@@ -55,7 +55,6 @@ CREATE TABLE `Car` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `ownerId` INTEGER NOT NULL,
     `categoryId` INTEGER NOT NULL,
-    `images` VARCHAR(191) NOT NULL,
     `registrationNo` VARCHAR(191) NOT NULL,
     `ownerName` VARCHAR(191) NOT NULL,
     `brand` VARCHAR(191) NOT NULL,
@@ -68,8 +67,16 @@ CREATE TABLE `Car` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `isHired` BOOLEAN NOT NULL DEFAULT false,
 
-    UNIQUE INDEX `Car_ownerId_key`(`ownerId`),
     UNIQUE INDEX `Car_registrationNo_key`(`registrationNo`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `CarImage` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `carId` INTEGER NOT NULL,
+    `url` VARCHAR(191) NOT NULL,
+
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -99,6 +106,9 @@ ALTER TABLE `Car` ADD CONSTRAINT `Car_ownerId_fkey` FOREIGN KEY (`ownerId`) REFE
 
 -- AddForeignKey
 ALTER TABLE `Car` ADD CONSTRAINT `Car_categoryId_fkey` FOREIGN KEY (`categoryId`) REFERENCES `CarCategory`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `CarImage` ADD CONSTRAINT `CarImage_carId_fkey` FOREIGN KEY (`carId`) REFERENCES `Car`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Booking` ADD CONSTRAINT `Booking_carId_fkey` FOREIGN KEY (`carId`) REFERENCES `Car`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

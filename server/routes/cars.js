@@ -1,23 +1,25 @@
-import express from "express";
+import express from 'express';
+import multer from 'multer';
 import {
   createCar,
   getAllCars,
   getCarById,
+  getCarsByOwner,
   verifyCar,
   updateCar,
-  updateCarStatus,
   deleteCar
-} from "../controllers/cars.js";
-import upload from "../middlewares/upload.js";
-import { authenticate, authorizeRoles } from "../middlewares/auth.js";
-
+} from "../controllers/cars.js"
+import {  authenticate, authorizeRoles } from "../middlewares/auth.js";
 const router = express.Router();
-router.post("/", authenticate, authorizeRoles("CAR_OWNER"), upload.array("images", 5), createCar);
-router.get("/", authenticate, getAllCars);
-router.get("/:id", authenticate, getCarById);
-router.patch("/:id", authenticate, authorizeRoles(["CAR_OWNER", "ADMIN"]), upload.array("images", 5), updateCar);
-router.patch("/verify/:id", authenticate, authorizeRoles("ADMIN"), verifyCar);
-router.patch("/status/:id", authenticate, authorizeRoles("ADMIN"), updateCarStatus);
-router.delete("/:id", authenticate, authorizeRoles(["CAR_OWNER", "ADMIN"]), deleteCar);
+const upload = multer({ dest: 'uploads/cars' }); // Adjust this to your storage logic
+
+// Routes
+router.post('/', authenticate,authorizeRoles(["CAR_OWNER"]), upload.array('images'), createCar);
+router.get('/', authenticate, getAllCars);
+router.get('/:id', authenticate, getCarById);
+router.get('/owner/:ownerId', authenticate, getCarsByOwner);
+router.put('/verify/:id',authenticate, authorizeRoles(["ADMIN"]), verifyCar);
+router.put('/:id',  authenticate, authorizeRoles(["CAR_OWNER", "ADMIN"]), upload.array('images'), updateCar);
+router.delete('/:id', authenticate, authorizeRoles(["CAR_OWNER", "ADMIN"]), deleteCar);
 
 export default router;

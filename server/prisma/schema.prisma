@@ -57,10 +57,10 @@ model CarCategory {
 model Car {
   id              Int         @id @default(autoincrement())
   owner           CarOwner    @relation(fields: [ownerId], references: [id])
-  ownerId         Int          @unique
+  ownerId         Int        
   category        CarCategory @relation(fields: [categoryId], references: [id])
   categoryId      Int
-  images          String
+  images          CarImage[]  
   registrationNo  String      @unique
   ownerName       String
   brand           String
@@ -69,11 +69,19 @@ model Car {
   mileage         Float?
   color           String
   description     String?
-  isApproved      Boolean     @default(false) 
+  isApproved      Boolean     @default(false)
   createdAt       DateTime    @default(now())
-  isHired         Boolean     @default(false) 
-  bookings        Booking[]   
+  isHired         Boolean     @default(false)
+  bookings        Booking[]
 }
+
+model CarImage {
+  id     Int    @id @default(autoincrement())
+  car    Car    @relation(fields: [carId], references: [id])
+  carId  Int
+  url    String
+}
+
 
 model Booking {
   id              Int          @id @default(autoincrement())
