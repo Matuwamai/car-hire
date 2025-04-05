@@ -4,7 +4,7 @@ import {
 } from "react-icons/fa";  
 import { MdCategory } from "react-icons/md"; 
 import { Link, useNavigate } from "react-router-dom";
-import { AuthContext } from "@/context/authContext";// <-- import context
+import { AuthContext } from "@/context/authContext";
 
 interface SidebarProps {
   user: {
@@ -15,12 +15,12 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ user }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-  const authContext = useContext(AuthContext); // <-- use context
+  const authContext = useContext(AuthContext); 
 
   const handleLogout = async () => {
     try {
       if (authContext?.logout) {
-        await authContext.logout(); // <-- use context's logout
+        await authContext.logout(); 
         alert("Logged out successfully!");
         navigate("/login");
       } else {
@@ -37,7 +37,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
       case "ADMIN":
         return [
           { path: "/users", label: "Users", icon: <FaUsers size={20} /> },
-          { path: "/carowners", label: "Car Owners", icon: <FaCar size={20} /> },
+          { path: "/car-owners", label: "Car Owners", icon: <FaCar size={20} /> },
           { path: "/organizations", label: "Organizations", icon: <FaHome size={20} /> },
           { path: "/create-Category", label: "Create Category", icon: <FaPlusCircle size={20} /> },
           { path: "/categories", label: "Categories", icon: <MdCategory size={20} /> },
