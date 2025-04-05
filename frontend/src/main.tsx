@@ -17,6 +17,7 @@ import CategoryDetail from './pages/CategoryDetails'
 import BookPage from './pages/CreateBooking'
 import CarOwners from './pages/CarOwners'
 import BookingsPage from './pages/Bookings'
+import SingleBookingPage from './pages/BookingDetails'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -37,6 +38,7 @@ createRoot(document.getElementById('root')!).render(
     <Route path="/book/:carId" element={<BookPage />} />
     <Route path="/car-owners" element={<CarOwners />} />
     <Route path='/bookings' element={<BookingsPage />} />
+    <Route path='/booking/:id' element={<SingleBookingPage />} />
     </Route>
   </Routes>
   </AuthProvider>
