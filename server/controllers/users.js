@@ -76,7 +76,6 @@ export const createUser = async (req, res) => {
 
 export const loginUser = async (req, res) => {
   try {
-    // console.log(req.body)
     const { email, password } = req.body;
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) return res.status(404).json({ error: "User not found" });
@@ -84,7 +83,7 @@ export const loginUser = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(401).json({ error: "Invalid credentials" });
 
-    const token = jwt.sign({ id: user.id, role:user.role, name: user.name}, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: user.id, role:user.role, name: user.name }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
 

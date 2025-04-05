@@ -3,42 +3,67 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 export const createBooking = async (req, res) => {
   try {
-    const { carId, organizationId,  startDate, endDate } = req.body;
-    if (!carId || !organizationId ||  !startDate || !endDate) {
+    const { carId, startDate, endDate } = req.body;
+    const userId = req.user?.id;
+
+    const organization = await prisma.organization.findUnique({
+      where: { userId },
+    });
+
+    if (!carId || !organization?.id || !startDate || !endDate) {
       return res.status(400).json({ error: "All fields are required for booking" });
     }
+
     const start = new Date(startDate);
     const end = new Date(endDate);
 
     if (start >= end) {
       return res.status(400).json({ error: "Start date must be before end date" });
     }
-    const car = await prisma.car.findUnique({ where: { id: carId } });
+
+    const carIdInt = parseInt(carId);
+    if (isNaN(carIdInt)) {
+      return res.status(400).json({ error: "Invalid car ID" });
+    }
+
+    const car = await prisma.car.findUnique({ where: { id: carIdInt } });
     if (!car) {
       return res.status(404).json({ error: "Car not found" });
     }
-    const { pricePerDay } = car;
-    const totalDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-    const totalPrice = totalDays * pricePerDay;
-    const existingBooking = await prisma.booking.findFirst({
-      where: { carId, isActive: true },
-    });
 
-    if (existingBooking) {
-      return res.status(400).json({ error: "This car is already booked and currently in use." });
-    }
-    const booking = await prisma.booking.create({
-      data: {
-        carId,
-        organizationId,
-        totalPrice, 
-        startDate: start,
-        endDate: end,
-        isActive: true, 
+    const overlappingBooking = await prisma.booking.findFirst({
+      where: {
+        carId: carIdInt,
+        isActive: true,
+        OR: [
+          {
+            startDate: { lte: end },
+            endDate: { gte: start },
+          },
+        ],
       },
     });
+
+    if (overlappingBooking) {
+      return res.status(400).json({ error: "This car is already booked during the selected period." });
+    }
+
+    const totalDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+    const totalPrice = totalDays * car.pricePerDay;
+
+    const booking = await prisma.booking.create({
+      data: {
+        carId: carIdInt,
+        organizationId: organization.id,
+        totalPrice,
+        startDate: start,
+        endDate: end,
+        isActive: true,
+      },
+    });
+
     await prisma.car.update({
-      where: { id: carId },
+      where: { id: carIdInt },
       data: { isHired: true },
     });
 
@@ -46,7 +71,7 @@ export const createBooking = async (req, res) => {
       message: "Booking created successfully",
       booking,
       totalDays,
-      pricePerDay,
+      pricePerDay: car.pricePerDay,
       totalPrice,
     });
   } catch (error) {
@@ -54,6 +79,8 @@ export const createBooking = async (req, res) => {
     res.status(500).json({ error: error.message || "Error creating booking" });
   }
 };
+
+
 export const getAllBookings = async (req, res) => {
   try {
     const bookings = await prisma.booking.findMany({

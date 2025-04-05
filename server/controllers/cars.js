@@ -184,8 +184,6 @@ export const updateCar = async (req, res) => {
     res.status(500).json({ message: "Error updating car" });
   }
 };
-
-// DELETE car
 export const deleteCar = async (req, res) => {
   try {
     const { id } = req.params;
