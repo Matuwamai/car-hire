@@ -38,18 +38,16 @@ export const getCategoryById = async (req, res) => {
     const category = await prisma.carCategory.findUnique({
       where: { id: Number(id) },
       include: {
-        cars: {
-          select :{
+        cars: { 
+          select: {
             images: true,
-            brand:true,
-            model:true,
-            isHired:true,
-            pricePerDay:true,
-            ownerName:true,
-            createdAt:true
-            
+            brand: true,
+            model: true,
+            isHired: true,
+            pricePerDay: true,
+            ownerName: true,
+            createdAt: true
           }
-
         }
       }, 
     });
@@ -57,6 +55,13 @@ export const getCategoryById = async (req, res) => {
     if (!category) {
       return res.status(404).json({ error: "Category not found" });
     }
+    category.cars = category.cars.map((car) => ({
+      ...car,
+      images: car.images.map((img) => ({
+        ...img,
+        url: `http://localhost:5000/${img.url.replace(/\\/g, "/")}`,
+      })),
+    }));
 
     res.json(category);
   } catch (error) {
@@ -64,6 +69,7 @@ export const getCategoryById = async (req, res) => {
     res.status(500).json({ error: "Error fetching category" });
   }
 };
+
 export const updateCategory = async (req, res) => {
   try {
     const { id } = req.params;

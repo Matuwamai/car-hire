@@ -119,19 +119,24 @@ export const getCarById = async (req, res) => {
 export const getCarsByOwner = async (req, res) => {
   try {
     const ownerId = Number(req.params.ownerId);
+
+    if (isNaN(ownerId)) {
+      return res.status(400).json({ message: "Invalid or missing ownerId" });
+    }
+
     const cars = await prisma.car.findMany({
       where: { ownerId },
-      include: {
-        images: true,
-      },
+      include: { images: true },
     });
 
     const carsWithUrls = cars.map(attachImageUrls);
     res.status(200).json(carsWithUrls);
   } catch (error) {
+    console.error("Error fetching cars for owner:", error);
     res.status(500).json({ message: "Error fetching cars for owner" });
   }
 };
+
 
 
 export const verifyCar = async (req, res) => {
@@ -188,12 +193,20 @@ export const deleteCar = async (req, res) => {
   try {
     const { id } = req.params;
 
-    await prisma.car.delete({
+    if (!id || isNaN(Number(id))) {
+      return res.status(400).json({ message: "Invalid car ID" });
+    }
+
+    const deleted = await prisma.car.delete({
       where: { id: Number(id) },
     });
 
-    res.status(200).json({ message: "Car deleted successfully" });
+    res.status(200).json({ message: "Car deleted successfully", deleted });
   } catch (error) {
+    console.error("Delete car error:", error);
+    if (error.code === "P2025") {
+      return res.status(404).json({ message: "Car not found" });
+    }
     res.status(500).json({ message: "Error deleting car" });
   }
 };
