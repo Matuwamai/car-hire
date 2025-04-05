@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import  { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/authContext";
 import { FaUserCircle } from "react-icons/fa";
 

@@ -3,8 +3,13 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "@/context/authContext";
 
+
+interface CarImage {
+  id: number;
+  url: string;
+}
 interface Car {
-  images: string[];
+  images: CarImage[];
   brand: string;
   model: string;
   isHired: boolean;
@@ -12,7 +17,6 @@ interface Car {
   ownerName: string;
   createdAt: string;
 }
-
 interface Category {
   id: number;
   name: string;
@@ -74,7 +78,8 @@ const CategoryDetail = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
               {category.cars.map((car, index) => (
                 <div key={index} className="bg-gray-100 p-4 rounded shadow-md">
-                  <img src={car.images[0]} alt={car.brand} className="w-full h-40 object-cover rounded" />
+                  <img src={car.images?.length > 0 ? car.images[0].url : "/default-car.png"} 
+                  alt={car.brand} className="w-full h-40 object-cover rounded" />
                   <h4 className="text-xl font-semibold mt-2">
                     {car.brand} {car.model}
                   </h4>

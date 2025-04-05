@@ -17,7 +17,6 @@ interface Booking {
     user: { name: string };
   };
 }
-
 const BookingsPage = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const navigate = useNavigate();

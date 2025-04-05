@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { FaBook, FaCheckCircle, FaExclamationTriangle } from "react-icons/fa";
+import { FaBook,  FaExclamationTriangle } from "react-icons/fa";
 import { AuthContext } from "../context/authContext";
 
 const BookPage = () => {

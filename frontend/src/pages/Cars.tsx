@@ -34,7 +34,6 @@ const Cars = () => {
   };
 
   const handleCarClick = (carId) => {
-    // Navigate to the booking page and pass the carId
     navigate(`/book/${carId}`);
   };
 
@@ -128,7 +127,7 @@ const Cars = () => {
             <div className="mt-3 flex flex-wrap gap-2">
               {user?.role === "ORGANIZATION" && (
                 <button
-                  onClick={() => handleCarClick(car.id)} // Add click handler
+                  onClick={() => handleCarClick(car.id)} 
                   className="mt-4 w-full bg-blue-600 text-white p-2 rounded-lg flex items-center justify-center hover:bg-blue-700"
                 >
                   Hire
