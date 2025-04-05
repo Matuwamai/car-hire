@@ -44,24 +44,36 @@ const BookPage = () => {
       alert("Please select both start and end dates for booking.");
       return;
     }
+  
+    if (!user?.token) {
+      alert("Please log in to make a booking.");
+      navigate("/login");
+      return;
+    }
+  
     setIsBooking(true);
+  
     try {
       const response = await fetch(`http://localhost:5000/api/bookings/${carId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${user?.token}`,
+          Authorization: `Bearer ${user.token}`,
         },
-        body: JSON.stringify({ carId, startDate, endDate }),
+        body: JSON.stringify({
+          carId,
+          startDate,
+          endDate,
+        }),
       });
-
+  
+      const data = await response.json();
+  
       if (response.ok) {
-        const data = await response.json();
         alert(`Booking successful! Total price: Ksh ${data.totalPrice}`);
         navigate("/bookings");
       } else {
-        const errorData = await response.json();
-        alert(`Booking failed: ${errorData.error}`);
+        alert(`Booking failed: ${data.error}`);
       }
     } catch (error) {
       console.error("Error booking car:", error);
@@ -70,6 +82,8 @@ const BookPage = () => {
       setIsBooking(false);
     }
   };
+  
+  
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
@@ -87,8 +101,6 @@ const BookPage = () => {
           <p className="mt-2">Mileage: {car.mileage} km</p>
           <p className="mt-2">Color: {car.color}</p>
           <p className="mt-2">Description: {car.description}</p>
-
-          {/* Hired Status */}
           {car.isHired && car.bookings?.length > 0 ? (
             <div className="mt-4 p-3 bg-red-100 border border-red-500 rounded-lg flex items-center">
               <FaExclamationTriangle className="text-red-600 mr-2" size={20} />
@@ -102,7 +114,6 @@ const BookPage = () => {
             </div>
           ) : (
             <>
-              {/* Booking Form */}
               <div className="mt-4">
                 <label htmlFor="startDate" className="block text-sm font-semibold text-gray-700">Start Date</label>
                 <input
