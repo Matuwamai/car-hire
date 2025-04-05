@@ -14,14 +14,21 @@ export const createCar = async (req, res) => {
       ownerName,
     } = req.body;
 
-    const ownerId = req.user?.id;
-    if (!ownerId) return res.status(400).json({ message: "Owner ID is required" });
+    const userId = req.user?.id;
 
-    const imageUrls = req.files ? req.files.map(file => file.path) : [];
+    const carOwner = await prisma.carOwner.findUnique({
+      where: { userId },
+    });
+
+    if (!carOwner) {
+      return res.status(400).json({ message: "Car owner not found" });
+    }
+
+    const imageUrls = req.files ? req.files.map((file) => file.path) : [];
 
     const car = await prisma.car.create({
       data: {
-        ownerId: Number(ownerId),
+        ownerId: carOwner.id,
         categoryId: Number(categoryId),
         registrationNo,
         brand,
@@ -32,7 +39,7 @@ export const createCar = async (req, res) => {
         description,
         ownerName,
         images: {
-          create: imageUrls.map(url => ({ url })),
+          create: imageUrls.map((url) => ({ url })),
         },
       },
       include: { images: true },
@@ -44,9 +51,8 @@ export const createCar = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-const BASE_URL = "http://localhost:5000";
 
-// Helper function to map images with full URL
+const BASE_URL = "http://localhost:5000";
 const attachImageUrls = (car) => {
   return {
     ...car,

@@ -4,7 +4,20 @@ const prisma = new PrismaClient();
 
 export const getAllCarOwners = async (req, res) => {
   try {
-    const carOwners = await prisma.carOwner.findMany();
+    const carOwners = await prisma.carOwner.findMany({
+      include: {
+        user: { 
+          select: { 
+            id: true, 
+            name: true ,
+            email: true, 
+            profileImage: true, 
+            createdAt: true, 
+            role: true 
+          } 
+        },
+      },
+    });
     res.status(200).json(carOwners);
   } catch (error) {
     res.status(500).json({ error: "Error fetching car owners" });
