@@ -84,7 +84,11 @@ export const createBooking = async (req, res) => {
 export const getAllBookings = async (req, res) => {
   try {
     const bookings = await prisma.booking.findMany({
-      include: { car: true, organization: true },
+      include: { car:{
+        include:{images:true}
+      }, organization: {
+        include:{user: true}
+      } },
     });
     res.status(200).json(bookings);
   } catch (error) {
@@ -96,7 +100,11 @@ export const getBookingById = async (req, res) => {
     const { id } = req.params;
     const booking = await prisma.booking.findUnique({
       where: { id: parseInt(id) },
-      include: { car: true, organization: true, period: true },
+      include: { car:{
+        include:{images: true}
+      }, organization:{
+        include:{user:true}
+      }},
     });
 
     if (!booking) return res.status(404).json({ message: "Booking not found" });
