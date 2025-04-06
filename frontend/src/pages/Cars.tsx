@@ -39,22 +39,25 @@ const Cars = () => {
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this car?")) return;
-
+  
     try {
       const response = await fetch(`http://localhost:5000/api/cars/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${user?.token}`,
+          "Content-Type": "application/json",
         },
       });
-
+  
       if (!response.ok) throw new Error("Failed to delete car");
-
+  
       setCars(cars.filter((car) => car.id !== id));
     } catch (err) {
       alert(err.message);
     }
   };
+  
+  
 
   const handleVerify = async (id) => {
     try {
