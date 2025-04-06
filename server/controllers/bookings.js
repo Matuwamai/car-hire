@@ -114,6 +114,32 @@ export const getBookingById = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+export const getBookingByOrganization = async (req, res) => {
+  try {
+    const organizationId = Number(req.params.organizationId);
+    console.log(organizationId)
+    if (isNaN(organizationId)) {
+      return res.status(400).json({ message: "Invalid or missing organization ID" });
+    }
+
+    const bookings = await prisma.booking.findMany({
+      where: { organizationId },
+      include: {
+        car: {
+          include: {
+            images: true
+          }
+        }
+      }
+    });
+
+    res.status(200).json(bookings);
+    
+  } catch (error) {
+    console.error("Error fetching bookings by organization:", error);
+    res.status(500).json({ message: "Error fetching booking details" });
+  }
+};
 
 
 export const updateBooking = async (req, res) => {

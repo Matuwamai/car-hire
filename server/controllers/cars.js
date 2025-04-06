@@ -119,7 +119,6 @@ export const getCarById = async (req, res) => {
 export const getCarsByOwner = async (req, res) => {
   try {
     const ownerId = Number(req.params.ownerId);
-
     if (isNaN(ownerId)) {
       return res.status(400).json({ message: "Invalid or missing ownerId" });
     }
@@ -189,7 +188,6 @@ export const updateCar = async (req, res) => {
     res.status(500).json({ message: "Error updating car" });
   }
 };
-// DELETE /api/cars/:id
 export const deleteCar = async (req, res) => {
   const carId = parseInt(req.params.id);
 
