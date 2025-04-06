@@ -11,7 +11,6 @@ interface SidebarProps {
     role: "ADMIN" | "CAR_OWNER" | "ORGANIZATION";
   };
 }
-
 const Sidebar: React.FC<SidebarProps> = ({ user }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
@@ -56,7 +55,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
         return [
           { path: "/cars", label: "Cars/Home", icon: <FaCar size={20} /> },
           { path: "/categories", label: "Categories", icon: <MdCategory size={20} /> },
-          { path: "/bookings", label: "Bookings", icon: <FaBook size={20} /> },
+          { path: "/myBookings", label: "Bookings", icon: <FaBook size={20} /> },
           { path: "/profile", label: "Profile", icon: <FaUserCircle size={20} /> },
         ];
       default:

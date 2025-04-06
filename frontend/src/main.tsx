@@ -1,4 +1,4 @@
-import { StrictMode } from 'react'
+import { StrictMode, useContext } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { createRoot } from 'react-dom/client'
 import './index.css'
@@ -20,6 +20,8 @@ import BookingsPage from './pages/Bookings'
 import SingleBookingPage from './pages/BookingDetails'
 import OwnerCarsPage from './pages/CarOwnerCars'
 import CarOwnerPage from './pages/SingleCarOwner'
+import OrganizationBookings from './pages/OganazitionBookings'
+
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -43,6 +45,7 @@ createRoot(document.getElementById('root')!).render(
     <Route path='/booking/:id' element={<SingleBookingPage />} />
     <Route path='/my-cars' element={<OwnerCarsPage />} />
     <Route path="/carowners/:id" element={<CarOwnerPage />} />
+    <Route path="/myBookings" element={<OrganizationBookings />} />
     </Route>
   </Routes>
   </AuthProvider>
