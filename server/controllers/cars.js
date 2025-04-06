@@ -189,24 +189,27 @@ export const updateCar = async (req, res) => {
     res.status(500).json({ message: "Error updating car" });
   }
 };
+// DELETE /api/cars/:id
 export const deleteCar = async (req, res) => {
+  const carId = parseInt(req.params.id);
+
   try {
-    const { id } = req.params;
+    await prisma.$transaction([
+      prisma.booking.deleteMany({
+        where: { carId: carId },
+      }),
+      prisma.carImage.deleteMany({
+        where: {carId: carId}
+      }),
+      prisma.car.delete({
+        where: { id: carId },
+      }),
+    ]);
 
-    if (!id || isNaN(Number(id))) {
-      return res.status(400).json({ message: "Invalid car ID" });
-    }
-
-    const deleted = await prisma.car.delete({
-      where: { id: Number(id) },
-    });
-
-    res.status(200).json({ message: "Car deleted successfully", deleted });
-  } catch (error) {
-    console.error("Delete car error:", error);
-    if (error.code === "P2025") {
-      return res.status(404).json({ message: "Car not found" });
-    }
-    res.status(500).json({ message: "Error deleting car" });
+    res.status(200).json({ message: "Car and related bookings deleted" });
+  } catch (err) {
+    console.error("Delete car error:", err);
+    res.status(500).json({ error: "Failed to delete car" });
   }
 };
+
