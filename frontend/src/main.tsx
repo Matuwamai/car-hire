@@ -22,6 +22,7 @@ import OwnerCarsPage from './pages/CarOwnerCars'
 import CarOwnerPage from './pages/SingleCarOwner'
 import OrganizationBookings from './pages/OganazitionBookings'
 import ProtectedRoute from './components/ProtectedRoutes'
+import Unauthorized from './components/Unothorized'
 
 
 createRoot(document.getElementById('root')!).render(
@@ -31,12 +32,12 @@ createRoot(document.getElementById('root')!).render(
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path='/signup' element={<SignupPage />} />
+          <Route path='/unauthorized' element={<Unauthorized />} />
           <Route element={<ProtectedRoute />}>
             <Route element={<Layout />}>
               <Route path='/cars' element={<Cars />} />
               <Route path='/categories' element={<Categories />} />
               <Route path='/category/:id' element={<CategoryDetail />} />
-
               <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
                 <Route path='/users' element={<Users />} />
                 <Route path='/organizations' element={<Organizations />} />
