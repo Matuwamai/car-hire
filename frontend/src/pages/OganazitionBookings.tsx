@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "@/context/authContext"; 
 
 interface Image {
   id: number;
@@ -28,17 +29,21 @@ const OrganizationBookings = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
-  const organizationId = user?.organizationId;
+  const { user  } = useContext(AuthContext);
+  const userId = user?.id;
 
   useEffect(() => {
     const fetchBookings = async () => {
-      if (!organizationId) return;
+      if (!userId) return;
 
       try {
-        const res = await fetch(
-          `http://localhost:5000/api/bookings/organization/${organizationId}`
-        );
+        const res = await fetch(`http://localhost:5000/api/bookings/organization/${userId}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
+
         const data = await res.json();
         setBookings(data);
       } catch (err) {
@@ -49,10 +54,10 @@ const OrganizationBookings = () => {
     };
 
     fetchBookings();
-  }, [organizationId]);
+  }, [userId]);
 
-  if (!organizationId) {
-    return <p className="text-red-500 text-center mt-4">Organization not found.</p>;
+  if (!userId) {
+    return <p className="text-red-500 text-center mt-4">User not found.</p>;
   }
 
   if (loading) return <p className="text-center mt-4">Loading bookings...</p>;

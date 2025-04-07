@@ -48,14 +48,14 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
           { path: "/create-car", label: "Create Car", icon: <FaPlusCircle size={20} /> },
           { path: "/my-cars?", label: "My Cars", icon: <FaCar size={20} /> },
           { path: "/categories", label: "Categories", icon: <MdCategory size={20} /> },
-          { path: "/bookings", label: "Bookings", icon: <FaBook size={20} /> },
+          { path: "/cars", label: "Cars", icon: <FaBook size={20} /> },
           { path: "/profile", label: "Profile", icon: <FaUserCircle size={20} /> },
         ];
       case "ORGANIZATION":
         return [
           { path: "/cars", label: "Cars/Home", icon: <FaCar size={20} /> },
           { path: "/categories", label: "Categories", icon: <MdCategory size={20} /> },
-          { path: "/myBookings", label: "Bookings", icon: <FaBook size={20} /> },
+          { path: "/myBookings", label: "my Bookings", icon: <FaBook size={20} /> },
           { path: "/profile", label: "Profile", icon: <FaUserCircle size={20} /> },
         ];
       default:

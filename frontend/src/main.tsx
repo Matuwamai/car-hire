@@ -21,34 +21,44 @@ import SingleBookingPage from './pages/BookingDetails'
 import OwnerCarsPage from './pages/CarOwnerCars'
 import CarOwnerPage from './pages/SingleCarOwner'
 import OrganizationBookings from './pages/OganazitionBookings'
+import ProtectedRoute from './components/ProtectedRoutes'
 
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
- <Router>
- <AuthProvider>
-  <Routes>
-    <Route path="/login" element={<Login />}/>
-    <Route path='/signup' element={<SignupPage />} />
-    <Route  element={<Layout />}>
-    <Route path='/users' element={<Users />}/>
-    <Route path='/organizations' element={<Organizations />}/>
-    <Route path='/organizations/:id' element={<OrganizationDetail />}/>
-    <Route path='/cars' element={<Cars />}/>
-    <Route  path='/create-car' element={<CreateCar />}/>
-    <Route  path='/create-Category' element={<CreateCategory />}/>
-    <Route  path='/categories' element={<Categories />}/>
-    <Route  path='/category/:id' element={<CategoryDetail />}/>
-    <Route path="/book/:carId" element={<BookPage />} />
-    <Route path="/car-owners" element={<CarOwners />} />
-    <Route path='/bookings' element={<BookingsPage />} />
-    <Route path='/booking/:id' element={<SingleBookingPage />} />
-    <Route path='/my-cars' element={<OwnerCarsPage />} />
-    <Route path="/carowners/:id" element={<CarOwnerPage />} />
-    <Route path="/myBookings" element={<OrganizationBookings />} />
-    </Route>
-  </Routes>
-  </AuthProvider>
- </Router>
-  </StrictMode>,
+    <Router>
+      <AuthProvider>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path='/signup' element={<SignupPage />} />
+          <Route element={<ProtectedRoute />}>
+            <Route element={<Layout />}>
+              <Route path='/cars' element={<Cars />} />
+              <Route path='/categories' element={<Categories />} />
+              <Route path='/category/:id' element={<CategoryDetail />} />
+
+              <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
+                <Route path='/users' element={<Users />} />
+                <Route path='/organizations' element={<Organizations />} />
+                <Route path='/organizations/:id' element={<OrganizationDetail />} />
+                <Route path='/create-Category' element={<CreateCategory />} />
+                <Route path='/bookings' element={<BookingsPage />} />
+                <Route path="/car-owners" element={<CarOwners />} />
+                <Route path="/carowners/:id" element={<CarOwnerPage />} />
+                <Route path="/book/:carId" element={<BookPage />} />
+                <Route path='/booking/:id' element={<SingleBookingPage />} />
+              </Route>
+              <Route element={<ProtectedRoute allowedRoles={["CAR_OWNER"]} />}>
+                <Route path='/create-car' element={<CreateCar />} />
+                <Route path='/my-cars' element={<OwnerCarsPage />} />
+              </Route>
+              <Route element={<ProtectedRoute allowedRoles={["ORGANIZATION"]} />}>
+                <Route path="/myBookings" element={<OrganizationBookings />} />
+              </Route>
+            </Route>
+          </Route>
+        </Routes>
+      </AuthProvider>
+    </Router>
+  </StrictMode >,
 )
