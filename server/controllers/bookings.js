@@ -116,30 +116,39 @@ export const getBookingById = async (req, res) => {
 };
 export const getBookingByOrganization = async (req, res) => {
   try {
-    const organizationId = Number(req.params.organizationId);
-    console.log(organizationId)
-    if (isNaN(organizationId)) {
-      return res.status(400).json({ message: "Invalid or missing organization ID" });
+    const userId = Number(req.params.userId);
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: "Invalid user ID" });
     }
+    const organization = await prisma.organization.findUnique({
+      where: {
+        userId: userId,
+      },
+    });
 
+    if (!organization) {
+      return res.status(404).json({ message: "Organization not found for this user" });
+    }
     const bookings = await prisma.booking.findMany({
-      where: { organizationId },
+      where: {
+        organizationId: organization.id,
+      },
       include: {
         car: {
           include: {
-            images: true
-          }
-        }
-      }
+            images: true,
+          },
+        },
+      },
     });
 
     res.status(200).json(bookings);
-    
   } catch (error) {
-    console.error("Error fetching bookings by organization:", error);
+    console.error("Error fetching bookings by user:", error);
     res.status(500).json({ message: "Error fetching booking details" });
   }
 };
+
 
 
 export const updateBooking = async (req, res) => {
