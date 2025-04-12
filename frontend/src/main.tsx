@@ -1,8 +1,8 @@
 import { StrictMode, useContext } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { createRoot } from 'react-dom/client'
-import './index.css'
 import { AuthProvider } from './context/authContext'
+import './index.css'
 import Layout from './components/Layout'
 import Login from './pages/Login'
 import SignupPage from './pages/SignupPage'
@@ -47,9 +47,8 @@ createRoot(document.getElementById('root')!).render(
                 <Route path='/bookings' element={<BookingsPage />} />
                 <Route path="/car-owners" element={<CarOwners />} />
                 <Route path="/carowners/:id" element={<CarOwnerPage />} />
-                <Route path="/book/:carId" element={<BookPage />} />
-                <Route path='/booking/:id' element={<SingleBookingPage />} />
                 <Route path='/categories/update/:id' element={<UpdateCategory />} />
+                <Route path='/booking/:id' element={<SingleBookingPage />} />
               </Route>
               <Route element={<ProtectedRoute allowedRoles={["CAR_OWNER"]} />}>
                 <Route path='/create-car' element={<CreateCar />} />
@@ -57,6 +56,7 @@ createRoot(document.getElementById('root')!).render(
               </Route>
               <Route element={<ProtectedRoute allowedRoles={["ORGANIZATION"]} />}>
                 <Route path="/myBookings" element={<OrganizationBookings />} />
+                <Route path="/book/:carId" element={<BookPage />} />
               </Route>
             </Route>
           </Route>

@@ -71,7 +71,7 @@ const BookPage = () => {
   
       if (response.ok) {
         alert(`Booking successful! Total price: Ksh ${data.totalPrice}`);
-        navigate("/bookings");
+        navigate("/my-cars");
       } else {
         alert(`Booking failed: ${data.error}`);
       }
