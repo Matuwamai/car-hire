@@ -50,7 +50,7 @@ const OwnerCarsPage = () => {
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Cars by This Owner</h2>
+      <h2 className="text-2xl font-bold mb-4">My Cars</h2>
 
       {cars.length === 0 ? (
         <p>No cars found for this owner.</p>

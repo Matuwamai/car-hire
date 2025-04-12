@@ -23,6 +23,7 @@ import CarOwnerPage from './pages/SingleCarOwner'
 import OrganizationBookings from './pages/OganazitionBookings'
 import ProtectedRoute from './components/ProtectedRoutes'
 import Unauthorized from './components/Unothorized'
+import UpdateCategory from './pages/UpdateCategory'
 
 
 createRoot(document.getElementById('root')!).render(
@@ -48,6 +49,7 @@ createRoot(document.getElementById('root')!).render(
                 <Route path="/carowners/:id" element={<CarOwnerPage />} />
                 <Route path="/book/:carId" element={<BookPage />} />
                 <Route path='/booking/:id' element={<SingleBookingPage />} />
+                <Route path='/categories/update/:id' element={<UpdateCategory />} />
               </Route>
               <Route element={<ProtectedRoute allowedRoles={["CAR_OWNER"]} />}>
                 <Route path='/create-car' element={<CreateCar />} />
