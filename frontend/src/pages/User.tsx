@@ -48,7 +48,6 @@ const Users: React.FC = () => {
                 <th className="p-3 text-left">Email</th>
                 <th className="p-3 text-left">Role</th>
                 <th className="p-3 text-left">Joined</th>
-                <th className="p-3 text-left">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -78,14 +77,6 @@ const Users: React.FC = () => {
                     </span>
                   </td>
                   <td className="p-3">{new Date(user.createdAt).toLocaleDateString()}</td>
-                  <td className="p-3">
-                    <Link
-                      to={`/users/${user.id}`}
-                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-                    >
-                      View
-                    </Link>
-                  </td>
                 </tr>
               ))}
             </tbody>

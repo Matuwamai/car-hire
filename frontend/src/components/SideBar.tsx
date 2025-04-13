@@ -20,7 +20,6 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
     try {
       if (authContext?.logout) {
         await authContext.logout(); 
-        alert("Logged out successfully!");
         navigate("/login");
       } else {
         alert("Logout function not found in context.");
@@ -49,14 +48,12 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
           { path: "/my-cars?", label: "My Cars", icon: <FaCar size={20} /> },
           { path: "/categories", label: "Categories", icon: <MdCategory size={20} /> },
           { path: "/cars", label: "Cars", icon: <FaBook size={20} /> },
-          // { path: "/profile", label: "Profile", icon: <FaUserCircle size={20} /> },
         ];
       case "ORGANIZATION":
         return [
           { path: "/cars", label: "Cars/Home", icon: <FaCar size={20} /> },
           { path: "/categories", label: "Categories", icon: <MdCategory size={20} /> },
           { path: "/myBookings", label: "my Bookings", icon: <FaBook size={20} /> },
-          // { path: "/profile", label: "Profile", icon: <FaUserCircle size={20} /> },
         ];
       default:
         return [];
@@ -75,7 +72,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
         className={`h-screen w-64 bg-blue-600 text-white flex flex-col p-5 fixed top-0 left-0 transform transition-transform duration-300 
           ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 md:relative`}
       >
-        <h1 className="text-2xl font-bold text-center mb-5">Car Hire</h1>
+        <h1 className="text-2xl font-bold text-start mb-5 ">Car Hire</h1>
         
         <nav className="flex flex-col gap-4">
           {getMenuItems().map((item, index) => (

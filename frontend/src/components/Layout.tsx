@@ -20,7 +20,7 @@ const Layout = () => {
         <Sidebar user={user} />
       </div>
       <div className="flex flex-col flex-1 ml-64">
-        <div className="w-full bg-white shadow-md fixed top-0 left-64 right-0 z-10">
+        <div className=" bg-white  fixed top-0 left-64 right-0 z-10">
           <Navbar user={user} />
         </div>
         <div className="flex-1 overflow-y-auto p-5 mt-16">

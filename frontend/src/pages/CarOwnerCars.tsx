@@ -1,9 +1,24 @@
 import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "@/context/authContext";
 
 interface CarImage {
   id: number;
   url: string;
+}
+
+interface Booking {
+  id: number;
+  totalPrice: number;
+  startDate: string;
+  endDate: string;
+  organization: {
+    user: {
+      name: string;
+      email: string;
+      profileImage?: string | null;
+    };
+  };
 }
 
 interface Car {
@@ -16,16 +31,19 @@ interface Car {
   mileage: number;
   description: string;
   images: CarImage[];
+  bookings: Booking[];
 }
 
 const OwnerCarsPage = () => {
   const [cars, setCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(true);
-  const {user} = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchCars = async () => {
       if (!user?.token) return;
-  
+
       try {
         const res = await fetch(`http://localhost:5000/api/cars/owner/${user.id}`, {
           headers: {
@@ -33,7 +51,7 @@ const OwnerCarsPage = () => {
             Authorization: `Bearer ${user.token}`,
           },
         });
-  
+
         const data = await res.json();
         setCars(data);
       } catch (error) {
@@ -42,10 +60,10 @@ const OwnerCarsPage = () => {
         setLoading(false);
       }
     };
-  
+
     fetchCars();
   }, [user]);
-  
+
   if (loading) return <div className="p-4">Loading cars...</div>;
 
   return (
@@ -57,20 +75,32 @@ const OwnerCarsPage = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {cars.map((car) => (
-            <div key={car.id} className="border rounded-lg shadow p-4">
+            <div key={car.id} className="border rounded-lg shadow p-4 relative">
+              {car.bookings.length > 0 && (
+                <span className="absolute top-2 right-2 bg-blue-500 text-white text-s px-2 py-1 rounded-full">
+                  Booked
+                </span>
+              )}
               <img
-                src={car.images?.length > 0 ? car.images[0].url : "/default-car.png"}
+                src={car.images?.[0]?.url || "/default-car.png"}
                 alt="Car"
                 className="w-full h-48 object-cover rounded mb-2"
               />
-              <h3 className="text-lg font-semibold">
-                {car.brand} {car.model}
-              </h3>
+              <h3 className="text-lg font-semibold">{car.brand} {car.model}</h3>
               <p className="text-sm text-gray-600">{car.registrationNo}</p>
               <p className="text-sm">Color: {car.color}</p>
               <p className="text-sm">Mileage: {car.mileage} km</p>
               <p className="text-sm">Ksh {car.pricePerDay} per day</p>
               <p className="text-xs mt-1 text-gray-500">{car.description}</p>
+
+              {car.bookings.length > 0 && (
+                <button
+                  onClick={() => navigate(`/owner/bookings/${car.id}`)}
+                  className="mt-3 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full"
+                >
+                  View Booking
+                </button>
+              )}
             </div>
           ))}
         </div>

@@ -32,11 +32,9 @@ const Cars = () => {
       setLoading(false);
     }
   };
-
   const handleCarClick = (carId) => {
     navigate(`/book/${carId}`);
   };
-
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this car?")) return;
   
@@ -50,15 +48,11 @@ const Cars = () => {
       });
   
       if (!response.ok) throw new Error("Failed to delete car");
-  
       setCars(cars.filter((car) => car.id !== id));
     } catch (err) {
       alert(err.message);
     }
   };
-  
-  
-
   const handleVerify = async (id) => {
     try {
       const response = await fetch(`http://localhost:5000/api/cars/verify/${id}`, {
@@ -78,7 +72,6 @@ const Cars = () => {
       alert(err.message);
     }
   };
-
   const handleHireStatus = async (id) => {
     try {
       const response = await fetch(`http://localhost:5000/api/cars/status/${id}`, {
@@ -98,10 +91,8 @@ const Cars = () => {
       alert(err.message);
     }
   };
-
   if (loading) return <p className="text-center text-blue-500">Loading...</p>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
-
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Available Cars</h2>

@@ -24,6 +24,7 @@ import OrganizationBookings from './pages/OganazitionBookings'
 import ProtectedRoute from './components/ProtectedRoutes'
 import Unauthorized from './components/Unothorized'
 import UpdateCategory from './pages/UpdateCategory'
+import OwnerCarBookingDetailPage from './pages/Carbooking'
 
 
 createRoot(document.getElementById('root')!).render(
@@ -53,6 +54,7 @@ createRoot(document.getElementById('root')!).render(
               <Route element={<ProtectedRoute allowedRoles={["CAR_OWNER"]} />}>
                 <Route path='/create-car' element={<CreateCar />} />
                 <Route path='/my-cars' element={<OwnerCarsPage />} />
+                <Route path='/owner/bookings/:id' element={<OwnerCarBookingDetailPage />} />
               </Route>
               <Route element={<ProtectedRoute allowedRoles={["ORGANIZATION"]} />}>
                 <Route path="/myBookings" element={<OrganizationBookings />} />
