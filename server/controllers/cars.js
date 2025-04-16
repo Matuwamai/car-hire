@@ -125,7 +125,13 @@ export const getCarsByOwner = async (req, res) => {
 
     const cars = await prisma.car.findMany({
       where: { ownerId },
-      include: { images: true },
+      include: { images: true ,
+        bookings:{
+          include:{organization:{
+            include:{user: true}
+          }}
+        }
+      },
     });
 
     const carsWithUrls = cars.map(attachImageUrls);

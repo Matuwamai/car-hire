@@ -1,6 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
+import nodemailer from "nodemailer";
+
 export const createBooking = async (req, res) => {
   try {
     const { carId, startDate, endDate } = req.body;
@@ -26,7 +28,13 @@ export const createBooking = async (req, res) => {
       return res.status(400).json({ error: "Invalid car ID" });
     }
 
-    const car = await prisma.car.findUnique({ where: { id: carIdInt } });
+    const car = await prisma.car.findUnique({
+      where: { id: carIdInt },
+      include: {
+        owner: true, 
+      },
+    });
+
     if (!car) {
       return res.status(404).json({ error: "Car not found" });
     }
@@ -66,6 +74,31 @@ export const createBooking = async (req, res) => {
       where: { id: carIdInt },
       data: { isHired: true },
     });
+    if (car.owner?.user?.email7) {
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.SMTP_EMAIL, 
+          pass: process.env.SMTP_PASSWORD, 
+        },
+      });
+
+      const mailOptions = {
+        from: `"Car Hire System" <${process.env.SMTP_EMAIL}>`,
+        to: car.owner.email,
+        subject: "Your car has been booked!",
+        html: `
+          <h2>Hello ${car.owner.name || "Car Owner"},</h2>
+          <p>Your car <strong>${car.brand} ${car.model}</strong> (Reg: ${car.registrationNumber}) has been booked.</p>
+          <p><strong>Booked By:</strong> ${organization.name}</p>
+          <p><strong>From:</strong> ${start.toDateString()} <br /><strong>To:</strong> ${end.toDateString()}</p>
+          <p><strong>Total Price:</strong> ${totalPrice}</p>
+          <p>Thanks for using our platform!</p>
+        `,
+      };
+
+      await transporter.sendMail(mailOptions);
+    }
 
     res.status(201).json({
       message: "Booking created successfully",
@@ -79,6 +112,7 @@ export const createBooking = async (req, res) => {
     res.status(500).json({ error: error.message || "Error creating booking" });
   }
 };
+
 
 
 export const getAllBookings = async (req, res) => {
