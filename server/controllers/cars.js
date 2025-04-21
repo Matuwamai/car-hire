@@ -118,13 +118,21 @@ export const getCarById = async (req, res) => {
 
 export const getCarsByOwner = async (req, res) => {
   try {
-    const ownerId = Number(req.params.ownerId);
-    if (isNaN(ownerId)) {
-      return res.status(400).json({ message: "Invalid or missing ownerId" });
+    const userId = Number(req.params.userId);
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: "Invalid user ID" });
     }
-
+    const   owner = await prisma.carOwner.findUnique({
+      where: {
+        userId: userId,
+      },
+    });
+    if (!owner) {
+      return res.status(404).json({ message: "Owner not found for this user" });
+    }
+console.log(owner)
     const cars = await prisma.car.findMany({
-      where: { ownerId },
+      where: { owner },
       include: { images: true ,
         bookings:{
           include:{organization:{
