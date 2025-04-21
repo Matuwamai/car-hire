@@ -31,7 +31,11 @@ export const createBooking = async (req, res) => {
     const car = await prisma.car.findUnique({
       where: { id: carIdInt },
       include: {
-        owner: true, 
+        owner: {
+          include: {
+            user: true, // Make sure owner.user.email is available
+          },
+        },
       },
     });
 
@@ -74,30 +78,43 @@ export const createBooking = async (req, res) => {
       where: { id: carIdInt },
       data: { isHired: true },
     });
-    if (car.owner?.user?.email7) {
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.SMTP_EMAIL, 
-          pass: process.env.SMTP_PASSWORD, 
-        },
-      });
 
-      const mailOptions = {
-        from: `"Car Hire System" <${process.env.SMTP_EMAIL}>`,
-        to: car.owner.email,
-        subject: "Your car has been booked!",
-        html: `
-          <h2>Hello ${car.owner.name || "Car Owner"},</h2>
-          <p>Your car <strong>${car.brand} ${car.model}</strong> (Reg: ${car.registrationNumber}) has been booked.</p>
-          <p><strong>Booked By:</strong> ${organization.name}</p>
-          <p><strong>From:</strong> ${start.toDateString()} <br /><strong>To:</strong> ${end.toDateString()}</p>
-          <p><strong>Total Price:</strong> ${totalPrice}</p>
-          <p>Thanks for using our platform!</p>
-        `,
-      };
+    let emailStatus = "not sent";
+    let emailError = null;
 
-      await transporter.sendMail(mailOptions);
+    if (car.owner?.user?.email) {
+      try {
+        const transporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: process.env.SMTP_EMAIL,
+            pass: process.env.SMTP_PASSWORD,
+          },
+        });
+
+        const mailOptions = {
+          from: `"Car Hire System" <${process.env.SMTP_EMAIL}>`,
+          to: car.owner.user.email,
+          subject: "Your car has been booked!",
+          html: `
+            <h2>Hello ${car.owner.user.name || "Car Owner"},</h2>
+            <p>Your car <strong>${car.brand} ${car.model}</strong> (Reg: ${car.registrationNo}) has been booked.</p>
+            <p><strong>Booked By:</strong> ${organization.user.name}</p>
+            <p><strong>From:</strong> ${start.toDateString()} <br /><strong>To:</strong> ${end.toDateString()}</p>
+            <p><strong>Total Price:</strong> ${totalPrice}</p>
+            <p>Thanks for using our platform!</p>
+          `,
+        };
+
+        await transporter.sendMail(mailOptions);
+        console.log("Email sent successfully");
+        console.log("Sending email to:", car.owner.user.email);
+        emailStatus = "sent";
+      } catch (emailErr) {
+        console.error("Email Sending Error:", emailErr);
+        emailStatus = "failed";
+        emailError = emailErr.message;
+      }
     }
 
     res.status(201).json({
@@ -106,12 +123,15 @@ export const createBooking = async (req, res) => {
       totalDays,
       pricePerDay: car.pricePerDay,
       totalPrice,
+      emailStatus,
+      ...(emailError && { emailError }),
     });
   } catch (error) {
     console.error("Booking Creation Error:", error);
     res.status(500).json({ error: error.message || "Error creating booking" });
   }
 };
+
 
 
 
