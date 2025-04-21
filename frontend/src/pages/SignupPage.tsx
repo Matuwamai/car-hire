@@ -19,15 +19,16 @@ const SignupPage = () => {
     license: "",
   });
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleRoleChange = (value) => {
-    setRole(value);
+    setRole(value); 
     setFormData({ ...formData, role: value });
   };
 

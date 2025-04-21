@@ -42,7 +42,10 @@ const OwnerCarsPage = () => {
 
   useEffect(() => {
     const fetchCars = async () => {
-      if (!user?.token) return;
+      if (!user?.id || !user?.token) {
+        setLoading(false); 
+        return;
+      }
 
       try {
         const res = await fetch(`http://localhost:5000/api/cars/owner/${user.id}`, {
@@ -51,6 +54,10 @@ const OwnerCarsPage = () => {
             Authorization: `Bearer ${user.token}`,
           },
         });
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch cars");
+        }
 
         const data = await res.json();
         setCars(data);
@@ -62,9 +69,13 @@ const OwnerCarsPage = () => {
     };
 
     fetchCars();
-  }, [user]);
+  }, [user?.id, user?.token]);
 
   if (loading) return <div className="p-4">Loading cars...</div>;
+
+  if (!user?.id || !user?.token) {
+    return <div className="p-4 text-red-500">You must be logged in to view your cars.</div>;
+  }
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
@@ -77,7 +88,7 @@ const OwnerCarsPage = () => {
           {cars.map((car) => (
             <div key={car.id} className="border rounded-lg shadow p-4 relative">
               {car.bookings.length > 0 && (
-                <span className="absolute top-2 right-2 bg-blue-500 text-white text-s px-2 py-1 rounded-full">
+                <span className="absolute top-2 right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
                   Booked
                 </span>
               )}
