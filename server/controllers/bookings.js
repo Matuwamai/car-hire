@@ -33,7 +33,7 @@ export const createBooking = async (req, res) => {
       include: {
         owner: {
           include: {
-            user: true, // Make sure owner.user.email is available
+            user: true, 
           },
         },
       },
@@ -131,9 +131,6 @@ export const createBooking = async (req, res) => {
     res.status(500).json({ error: error.message || "Error creating booking" });
   }
 };
-
-
-
 
 export const getAllBookings = async (req, res) => {
   try {
