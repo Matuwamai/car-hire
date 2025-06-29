@@ -63,15 +63,29 @@ const attachImageUrls = (car) => {
   };
 };
 export const getAllCars = async (req, res) => {
+  const {search, page, limit} = req.query;
+  const currentPage = parseInt(page)|| 1;
+  const pageSize = parseInt(limit)|| 10;
+  const skip = (currentPage - 1)* pageSize;
+  const totalCars =  prisma.car.count();
   try {
     const cars = await prisma.car.findMany({
+      where:{
+        OR:[
+          {model:{contains: search}},
+          {brand:{contains: search}},
+          {registrationNo:{contains: search}}
+        ]
+      },
       include: {
         images: true,
       },
+      skip,
+      take :pageSize
     });
 
     const carsWithUrls = cars.map(attachImageUrls);
-    res.status(200).json(carsWithUrls);
+  return  res.status(200).json({carsWithUrls}, totalCars, currentPage);
   } catch (error) {
     res.status(500).json({ message: "Error fetching cars" });
   }

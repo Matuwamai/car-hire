@@ -8,13 +8,13 @@ export const authenticate = (req, res, next) => {
     }
 
     const token = authHeader.split(" ")[1];
-    console.log("🔍 Received Token:", token); 
+    // console.log("🔍 Received Token:", token); 
 
     if (!token) {
       return res.status(401).json({ error: "Unauthorized. Token is missing." });
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("✅ Decoded Token:", decoded); 
+    console.log(" Decoded Token:", decoded); 
     req.user = decoded; 
     next();
   } catch (error) {

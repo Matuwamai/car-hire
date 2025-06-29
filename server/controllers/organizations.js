@@ -2,8 +2,18 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const getAllOrganizations = async (req, res) => {
+  const {search , page , limit} = req.query;
+  const currentPage = parseInt(page)|| 1;
+  const pageSize = parseInt(limit)|| 10;
+  const skip = (currentPage - 1)* pageSize
+  const totalOrganisations = prisma.organization.count();
   try {
     const organizations = await prisma.organization.findMany({
+      where:{
+        OR:[
+          {user:{name:{contains:search}}}
+        ]
+      },
       include: {
         user: { 
           select: { 
@@ -16,8 +26,10 @@ export const getAllOrganizations = async (req, res) => {
           } 
         },
       },
+      skip,
+      take: pageSize
     });
-    res.json(organizations);
+  return  res.json({organizations, totalOrganisations, currentPage});
   } catch (error) {
     console.error("Error fetching organizations:", error);
     res.status(500).json({ error: "Error fetching organizations" });

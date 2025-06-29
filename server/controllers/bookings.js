@@ -107,8 +107,8 @@ export const createBooking = async (req, res) => {
         };
 
         await transporter.sendMail(mailOptions);
-        console.log("Email sent successfully");
-        console.log("Sending email to:", car.owner.user.email);
+        // console.log("Email sent successfully");
+        // console.log("Sending email to:", car.owner.user.email);
         emailStatus = "sent";
       } catch (emailErr) {
         console.error("Email Sending Error:", emailErr);
@@ -133,13 +133,25 @@ export const createBooking = async (req, res) => {
 };
 
 export const getAllBookings = async (req, res) => {
+  const {search , page,  limit} = req.query;
+  const currentPage = parseInt(page)|| 1;
+  const pageSize = parse(limit)|| 10;
+  const skip = (currentPage -1)*pageSize;
+
   try {
     const bookings = await prisma.booking.findMany({
+      where:{
+        OR:[
+          {name: {contains: search}}
+        ]
+      },
       include: { car:{
         include:{images:true}
       }, organization: {
         include:{user: true}
       } },
+      skip,
+      take : pageSize
     });
     res.status(200).json(bookings);
   } catch (error) {

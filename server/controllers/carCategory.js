@@ -23,9 +23,22 @@ export const createCategory = async (req, res) => {
   }
 };
 export const getAllCategories = async (req, res) => {
+  const {search, page , limit} = req.query;
+  const currentPage = parseInt(page)|| 1;
+  const pageSize = parseInt(limit)|| 10;
+  const skip =(currentPage - 1)* pageSize;
+  const totalCategories = prisma.carCategory.count();
   try {
-    const categories = await prisma.carCategory.findMany();
-    res.json(categories);
+    const categories = await prisma.carCategory.findMany({
+      where:{
+        OR:[
+          {name:{contains:search}}
+        ]
+      },
+      skip,
+      take :pageSize
+    });
+   return res.json({categories, totalCategories, currentPage});
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error fetching categories" });
@@ -80,7 +93,7 @@ export const updateCategory = async (req, res) => {
       data: { name, description },
     });
 
-    res.json(category);
+    res.status(200).json(category);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error updating category" });

@@ -94,8 +94,21 @@ export const loginUser = async (req, res) => {
 };
  
 export const getAllUsers = async(req,res) =>{
+  const {search, page, limit} = req.query;
+  const currentPage = parseInt(page)|| 1;
+  const pageSize = parseInt(limit)|| 10;
+  const skip = (currentPage - 1)* pageSize;
+  const totalUsers = prisma.user.count();
   try{
- const users = await prisma.user.findMany();
+ const users = await prisma.user.findMany({
+  where:{
+    OR:[
+      {name:{contains: search}}
+    ]
+  }, 
+  skip,
+  take : currentPage
+ });
  res.status(200).json(users);
   }catch(error){
   console.log(error);

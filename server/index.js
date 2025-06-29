@@ -19,7 +19,7 @@ app.use("/api/organizations", organizationsRoutes);
 app.use("/api/cars", carsRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/bookings", bookingsRoutes)
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
