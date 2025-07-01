@@ -33,7 +33,7 @@ createRoot(document.getElementById('root')!).render(
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path='/signup' element={<SignupPage />} />
+          <Route path='/' element={<SignupPage />} />
           <Route path='/unauthorized' element={<Unauthorized />} />
           <Route element={<ProtectedRoute />}>
             <Route element={<Layout />}>
