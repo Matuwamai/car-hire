@@ -3,7 +3,7 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { AuthContext } from "@/context/authContext";
-
+import { BASE_URL } from "@/base_url";
 interface CategoryFormData {
   name: string;
   description: string;
@@ -29,7 +29,7 @@ const UpdateCategory = () => {
       try {
         setLoading(true);
         const response = await axios.get(
-          `http://localhost:5000/api/categories/${id}`,
+          `${BASE_URL}/api/categories/${id}`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -58,7 +58,7 @@ const UpdateCategory = () => {
       setSuccess(null);
 
       await axios.put(
-        `http://localhost:5000/api/categories/${id}`,
+        `${BASE_URL}/api/categories/${id}`,
         data,
         {
           headers: {

@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { AuthContext } from "../context/authContext";
-
+import { BASE_URL } from "@/base_url";
 const OrganizationDetail = () => {
   const { id } = useParams();
   const { user } = useContext(AuthContext);
@@ -20,7 +20,7 @@ const OrganizationDetail = () => {
 
   const fetchOrganization = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/organizations/${id}`, {
+      const response = await fetch(`${BASE_URL}/api/organizations/${id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/context/authContext"; 
-
+import { BASE_URL } from "@/base_url";
 interface Image {
   id: number;
   carId: number;
@@ -37,7 +37,7 @@ const OrganizationBookings = () => {
       if (!userId) return;
 
       try {
-        const res = await fetch(`http://localhost:5000/api/bookings/organization/${userId}`, {
+        const res = await fetch(`${BASE_URL}/api/bookings/organization/${userId}`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${user.token}`,

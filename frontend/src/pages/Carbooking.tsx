@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/context/authContext";
+import { BASE_URL } from "@/base_url";
 
 interface CarImage {
   id: number;
@@ -50,7 +51,7 @@ const OwnerCarBookingDetailPage = () => {
       }
 
       try {
-        const res = await fetch(`http://localhost:5000/api/cars/${id}`, {
+        const res = await fetch(`${BASE_URL}/api/cars/${id}`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${user.token}`,

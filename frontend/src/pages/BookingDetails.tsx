@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { AuthContext } from "@/context/authContext";
+import{ BASE_URL} from "../base_url"
 
 const SingleBookingPage = () => {
   const { id } = useParams();
@@ -13,7 +14,7 @@ const SingleBookingPage = () => {
   useEffect(() => {
     const fetchBooking = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/bookings/${id}`, {
+        const res = await fetch(`${BASE_URL}/api/bookings/${id}`, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${user?.token}`,
@@ -34,7 +35,7 @@ const SingleBookingPage = () => {
 
   const handleUpdate = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/bookings/${id}`, {
+      const res = await fetch(`${BASE_URL}/api/bookings/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -54,7 +55,7 @@ const SingleBookingPage = () => {
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this booking?")) return;
     try {
-      await fetch(`http://localhost:5000/api/bookings/${id}`, {
+      await fetch(`${BASE_URL}/api/bookings/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${user?.token}`,
@@ -82,7 +83,7 @@ const SingleBookingPage = () => {
       <div className="flex gap-6">
         {car?.images?.[0]?.url && (
           <img
-            src={`http://localhost:5000/${car.images[0].url.replace(/\\/g, "/")}`}
+            src={`${BASE_URL}/${car.images[0].url.replace(/\\/g, "/")}`}
             alt="Car"
             className="w-64 h-48 object-cover rounded-lg shadow"
           />

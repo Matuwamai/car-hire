@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FaBook,  FaExclamationTriangle } from "react-icons/fa";
 import { AuthContext } from "../context/authContext";
-
+import { BASE_URL } from "@/base_url";
 const BookPage = () => {
   const { carId } = useParams();
   const [car, setCar] = useState(null);
@@ -20,7 +20,7 @@ const BookPage = () => {
 
   const fetchCarDetails = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/cars/${carId}`, {
+      const response = await fetch(`${BASE_URL}/api/cars/${carId}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${user?.token}`,
@@ -54,7 +54,7 @@ const BookPage = () => {
     setIsBooking(true);
   
     try {
-      const response = await fetch(`http://localhost:5000/api/bookings/${carId}`, {
+      const response = await fetch(`${BASE_URL}/api/bookings/${carId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

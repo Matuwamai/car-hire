@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/authContext";
+import { BASE_URL } from "@/base_url";
 
 const CarOwners = () => {
   const { user } = useContext(AuthContext);
@@ -19,7 +20,7 @@ const CarOwners = () => {
 
   const fetchCarOwners = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/carowners", {
+      const res = await fetch(`${BASE_URL}/api/carowners`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -42,7 +43,7 @@ const CarOwners = () => {
     if (!window.confirm("Are you sure you want to delete this car owner?")) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/carowners/${id}`, {
+      const res = await fetch(`${BASE_URL}/api/carowners/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${user?.token}`,

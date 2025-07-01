@@ -12,10 +12,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const userFromLocalstorage = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") ): null
   const [user, setUser] = useState<{ id: string; role: string; token: string; name: string } | null>(userFromLocalstorage);
 
-  const BASE_URL =` http://localhost:5000/api`
+  const BASE_URL =` http://localhost:8000/api`
   const login = async (email: string, password: string) => {
     try {
-      const res = await axios.post(`${BASE_URL}/users/login`, { email, password });
+      const res = await axios.post(`http://localhost:8000/api/users/login`, { email, password });
       const { token } = res.data;
 
       if (token) {

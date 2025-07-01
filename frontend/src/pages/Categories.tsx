@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "@/context/authContext";
 import { useNavigate } from "react-router-dom";
-
+import { BASE_URL } from "@/base_url";
 interface Category {
   id: number;
   name: string;
@@ -29,7 +29,7 @@ const Categories = () => {
       }
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:5000/api/categories", {
+        const response = await axios.get(`${BASE_URL}/api/categories`, {
           headers: { Authorization: `Bearer ${user.token}` },
         });
         setCategories(response.data);
@@ -49,7 +49,7 @@ const Categories = () => {
     }
 
     try {
-      await axios.delete(`http://localhost:5000/api/categories/${id}`, {
+      await axios.delete(`${BASE_URL}/api/categories/${id}`, {
         headers: { Authorization: `Bearer ${user.token}` },
       });
 

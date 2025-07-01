@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "@/context/authContext";
+import { BASE_URL } from "@/base_url";
 
 interface Booking {
   id: number;
@@ -25,7 +26,7 @@ const BookingsPage = () => {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/bookings", {
+        const response = await fetch(`${BASE_URL}/api/bookings`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${user?.token}`,
@@ -58,7 +59,7 @@ const BookingsPage = () => {
             className="bg-white rounded-2xl shadow p-4 flex gap-4"
           >
             <img
-              src={`http://localhost:5000/${booking.car.images[0]?.url}`}
+              src={`${BASE_URL}${booking.car.images[0]?.url}`}
               alt="Car"
               className="w-40 h-28 object-cover rounded-xl"
             />

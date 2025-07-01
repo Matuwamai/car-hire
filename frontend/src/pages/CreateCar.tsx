@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { AuthContext } from "@/context/authContext";
-
+import { BASE_URL } from "@/base_url";
 interface Category {
   id: string;
   name: string;
@@ -37,7 +37,7 @@ const CreateCar = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/categories", {
+        const response = await axios.get(`${BASE_URL}/api/categories`, {
           headers: { Authorization: `Bearer ${user?.token}` },
         });
         setCategories(response.data);
@@ -86,7 +86,7 @@ const CreateCar = () => {
         formData.append("images", file);
       });
 
-      await axios.post("http://localhost:5000/api/cars", formData, {
+      await axios.post(`${BASE_URL}/api/cars`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${user.token}`,

@@ -1,7 +1,7 @@
 import  { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-
+import { BASE_URL } from "@/base_url";
 interface User {
   id: number;
   name: string;
@@ -19,7 +19,7 @@ const Users: React.FC = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/users/");
+        const response = await axios.get(`${BASE_URL}/api/users/`);
         setUsers(response.data);
       } catch (err: any) {
         setError("Error fetching users.");

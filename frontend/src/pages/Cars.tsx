@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
-
+import { BASE_URL } from "@/base_url";
 const Cars = () => {
   const { user } = useContext(AuthContext);
   const [cars, setCars] = useState([]);
@@ -15,7 +15,7 @@ const Cars = () => {
 
   const fetchCars = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/cars", {
+      const response = await fetch(`${BASE_URL}/api/cars`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -39,7 +39,7 @@ const Cars = () => {
     if (!window.confirm("Are you sure you want to delete this car?")) return;
   
     try {
-      const response = await fetch(`http://localhost:5000/api/cars/${id}`, {
+      const response = await fetch(`${BASE_URL}/api/cars/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${user?.token}`,
@@ -55,7 +55,7 @@ const Cars = () => {
   };
   const handleVerify = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/cars/verify/${id}`, {
+      const response = await fetch(`${BASE_URL}/api/cars/verify/${id}`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${user?.token}`,
@@ -74,7 +74,7 @@ const Cars = () => {
   };
   const handleHireStatus = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/cars/status/${id}`, {
+      const response = await fetch(`${BASE_URL}/api/cars/status/${id}`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${user?.token}`,

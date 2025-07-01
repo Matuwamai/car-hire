@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { AuthContext } from "@/context/authContext";
-
+import { BASE_URL } from "@/base_url";
 type CarImage = {
   id: number;
   carId: number;
@@ -44,7 +44,7 @@ const CarOwnerPage = () => {
   useEffect(() => {
     const fetchCarOwner = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/carowners/${id}`, {
+        const res = await fetch(`${BASE_URL}/api/carowners/${id}`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${user?.token}`,

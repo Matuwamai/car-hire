@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/authContext"; 
-
+import { BASE_URL } from "@/base_url";
 const Organizations = () => {
     const { user } = useContext(AuthContext);
   const [organizations, setOrganizations] = useState([]);
@@ -19,7 +19,7 @@ const Organizations = () => {
 
   const fetchOrganizations = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/organizations", {
+      const response = await fetch(`${BASE_URL}/api/organizations`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -39,7 +39,7 @@ const Organizations = () => {
   };
   const handleVerify = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/organizations/verify/${id}`, {
+      const response = await fetch(`${BASE_URL}/api/organizations/verify/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -58,7 +58,7 @@ const Organizations = () => {
     if (!window.confirm("Are you sure you want to delete this organization?")) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/organizations/${id}`, {
+      const response = await fetch(`${BASE_URL}/api/organizations/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${user?.token}`,

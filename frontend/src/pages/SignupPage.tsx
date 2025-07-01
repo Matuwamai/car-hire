@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Alert } from "@/components/ui/alert";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { Link, redirect, useNavigate } from "react-router-dom";
+import { BASE_URL } from "@/base_url";
 
 const SignupPage = () => {
   const [role, setRole] = useState("");
@@ -46,7 +47,7 @@ const SignupPage = () => {
     }
 
     try {
-        const response = await fetch(`http://localhost:5000/api/users/register`, {
+        const response = await fetch(`${BASE_URL}/api/users/register`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

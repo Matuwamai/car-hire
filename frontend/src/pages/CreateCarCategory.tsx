@@ -7,7 +7,7 @@ interface CategoryFormData {
   name: string;
   description: string;
 }
-
+import { BASE_URL } from "@/base_url";
 const CreateCategory = () => {
   const { register, handleSubmit, reset } = useForm<CategoryFormData>();
   const [loading, setLoading] = useState(false);
@@ -32,7 +32,7 @@ const CreateCategory = () => {
       setSuccess(null);
 
       const response = await axios.post(
-        "http://localhost:5000/api/categories",
+        `${BASE_URL}/api/categories`,
         data,
         {
           headers: {

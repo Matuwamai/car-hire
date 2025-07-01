@@ -2,8 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "@/context/authContext";
-
-
+import { BASE_URL } from "@/base_url";
 interface CarImage {
   id: number;
   url: string;
@@ -46,7 +45,7 @@ const CategoryDetail = () => {
 
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:5000/api/categories/${id}`, {
+        const response = await axios.get(`${BASE_URL}/api/categories/${id}`, {
           headers: { Authorization: `Bearer ${user.token}` },
         });
 
