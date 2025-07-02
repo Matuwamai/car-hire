@@ -7,25 +7,59 @@ const Cars = () => {
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+// Search & Pagination State
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchCars();
-  }, []);
+  }, [page]);
+  // const fetchCars = async () => {
+  //   try {
+  //     const response = await fetch(`${BASE_URL}/api/cars`, {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${user?.token}`,
+  //       },
+  //     });
+  //     if (!response.ok) throw new Error("Failed to fetch cars");
 
-  const fetchCars = async () => {
+  //     const data = await response.json();
+  //     setCars(data);
+  //     console.log("Fetched cars data:", data);
+
+  //   } catch (err) {
+  //     setError(err.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  
+  // 🆕 Fetch Cars with optional search
+  const fetchCars = async (searchQuery = "") => {
     try {
-      const response = await fetch(`${BASE_URL}/api/cars`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user?.token}`,
-        },
-      });
+      setLoading(true);
+      const response = await fetch(
+        `${BASE_URL}/api/cars?search=${searchQuery}&page=${page}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user?.token}`,
+          },
+        }
+      );
+
       if (!response.ok) throw new Error("Failed to fetch cars");
 
       const data = await response.json();
-      setCars(data);
+      setCars(Array.isArray(data.cars) ? data.cars : []);
+      setTotalPages(data.totalPages || 1);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -37,7 +71,7 @@ const Cars = () => {
   };
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this car?")) return;
-  
+
     try {
       const response = await fetch(`${BASE_URL}/api/cars/${id}`, {
         method: "DELETE",
@@ -46,7 +80,7 @@ const Cars = () => {
           "Content-Type": "application/json",
         },
       });
-  
+
       if (!response.ok) throw new Error("Failed to delete car");
       setCars(cars.filter((car) => car.id !== id));
     } catch (err) {
@@ -91,11 +125,41 @@ const Cars = () => {
       alert(err.message);
     }
   };
+   //  Handle Search
+  const handleSearch = () => {
+    setPage(1); // reset to first page
+    fetchCars(search);
+  };
+   // Pagination handlers
+  const handleNext = () => {
+    if (page < totalPages) setPage((prev) => prev + 1);
+  };
+
+  const handlePrev = () => {
+    if (page > 1) setPage((prev) => prev - 1);
+  };
   if (loading) return <p className="text-center text-blue-500">Loading...</p>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Available Cars</h2>
+      
+      {/* 🆕 Search Bar */}
+      <div className="mb-6 flex gap-2">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search by brand, model..."
+          className="border border-gray-300 p-2 rounded w-full"
+        />
+        <button
+          onClick={handleSearch}
+          className="bg-blue-600 text-white px-4 rounded hover:bg-blue-700"
+        >
+          Search
+        </button>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {cars.map((car) => (
           <div key={car.id} className="bg-white shadow-md rounded-lg p-4">
@@ -121,7 +185,7 @@ const Cars = () => {
             <div className="mt-3 flex flex-wrap gap-2">
               {user?.role === "ORGANIZATION" && (
                 <button
-                  onClick={() => handleCarClick(car.id)} 
+                  onClick={() => handleCarClick(car.id)}
                   className="mt-4 w-full bg-blue-600 text-white p-2 rounded-lg flex items-center justify-center hover:bg-blue-700"
                 >
                   Hire
@@ -157,6 +221,26 @@ const Cars = () => {
             </div>
           </div>
         ))}
+      </div>
+       {/* 🆕 Pagination Controls */}
+      <div className="mt-6 flex justify-between items-center">
+        <button
+          onClick={handlePrev}
+          disabled={page === 1}
+          className="bg-gray-300 px-4 py-2 rounded disabled:opacity-50"
+        >
+          Previous
+        </button>
+        <span className="text-sm">
+          Page {page} of {totalPages}
+        </span>
+        <button
+          onClick={handleNext}
+          disabled={page === totalPages}
+          className="bg-gray-300 px-4 py-2 rounded disabled:opacity-50"
+        >
+          Next
+        </button>
       </div>
     </div>
   );
