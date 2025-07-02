@@ -44,6 +44,16 @@ export const getAllCategories = async (req, res) => {
     res.status(500).json({ error: "Error fetching categories" });
   }
 };
+
+export const getCategories = async(req, res) =>{
+  try{
+    const categories = await prisma.carCategory.findMany({});
+    res.status(200).json(categories);
+  }catch(error){
+    console.error(error)
+    res.search(500).json({error: "Error fetching categories"})
+  }
+};
 export const getCategoryById = async (req, res) => {
   try {
     const { id } = req.params;
