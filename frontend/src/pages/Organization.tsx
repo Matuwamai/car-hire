@@ -8,6 +8,10 @@ const Organizations = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
   useEffect(() => {
     if (user?.token) {
       fetchOrganizations();
@@ -15,11 +19,11 @@ const Organizations = () => {
       setError("User not authenticated. Please log in.");
       setLoading(false);
     }
-  }, [user?.token]);
+  }, [user?.token, page]);
 
-  const fetchOrganizations = async () => {
+  const fetchOrganizations = async (searchQuery ="") => {
     try {
-      const response = await fetch(`${BASE_URL}/api/organizations`, {
+      const response = await fetch(`${BASE_URL}/api/organizations?search=${searchQuery}&page=${page}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -31,6 +35,8 @@ const Organizations = () => {
   
       const data = await response.json();
       setOrganizations(data);
+      setTotalPages(data.totalPages || 1);
+      console.log(data)
     } catch (err) {
       setError(err.message);
     } finally {
@@ -73,12 +79,39 @@ const Organizations = () => {
     }
   };
 
+  
+  const handleSearch = () => {
+    setPage(1); 
+    fetchOrganizations(search);
+  };
+  const handleNext = () => {
+    if (page < totalPages) setPage((prev) => prev + 1);
+  };
+  const handlePrev = () => {
+    if(page > 1) setPage((prev) => prev-1);
+  };
+
   if (loading) return <p className="text-center text-blue-500">Loading...</p>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
 
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Organizations</h2>
+      <div className="mb-6 flex gap-2">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search by brand, model..."
+          className="border border-gray-300 p-2 rounded w-full"
+        />
+        <button
+          onClick={handleSearch}
+          className="bg-blue-600 text-white px-4 rounded hover:bg-blue-700"
+        >
+          Search
+        </button>
+      </div>
       <div className="overflow-x-auto">
         <table className="w-full border-collapse border border-gray-300">
           <thead>
@@ -135,6 +168,25 @@ const Organizations = () => {
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="mt-6 flex justify-between items-center">
+        <button
+          onClick={handlePrev}
+          disabled={page === 1}
+          className="bg-gray-300 px-4 py-2 rounded disabled:opacity-50"
+        >
+          Previous
+        </button>
+        <span className="text-sm">
+          Page {page} of {totalPages}
+        </span>
+        <button
+          onClick={handleNext}
+          disabled={page === totalPages}
+          className="bg-gray-300 px-4 py-2 rounded disabled:opacity-50"
+        >
+          Next
+        </button>
       </div>
     </div>
   );

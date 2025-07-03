@@ -18,34 +18,14 @@ const Cars = () => {
   useEffect(() => {
     fetchCars();
   }, [page]);
-  // const fetchCars = async () => {
-  //   try {
-  //     const response = await fetch(`${BASE_URL}/api/cars`, {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${user?.token}`,
-  //       },
-  //     });
-  //     if (!response.ok) throw new Error("Failed to fetch cars");
 
-  //     const data = await response.json();
-  //     setCars(data);
-  //     console.log("Fetched cars data:", data);
-
-  //   } catch (err) {
-  //     setError(err.message);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   
   // 🆕 Fetch Cars with optional search
   const fetchCars = async (searchQuery = "") => {
     try {
       setLoading(true);
       const response = await fetch(
-        `${BASE_URL}/api/cars?search=${searchQuery}&page=${page}`,
+        `${BASE_URL}/api/cars/?search=${searchQuery}&page=${page}`,
         {
           method: "GET",
           headers: {
@@ -54,12 +34,12 @@ const Cars = () => {
           },
         }
       );
-
       if (!response.ok) throw new Error("Failed to fetch cars");
 
       const data = await response.json();
-      setCars(Array.isArray(data.cars) ? data.cars : []);
+      setCars(Array.isArray(data.carsWithUrls) ? data.carsWithUrls : []);
       setTotalPages(data.totalPages || 1);
+      console.log(data)
     } catch (err) {
       setError(err.message);
     } finally {

@@ -41,6 +41,8 @@ const OwnerCarsPage = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
+
+
   useEffect(() => {
     const fetchCars = async () => {
       if (!user?.id || !user?.token) {
@@ -77,6 +79,8 @@ const OwnerCarsPage = () => {
   if (!user?.id || !user?.token) {
     return <div className="p-4 text-red-500">You must be logged in to view your cars.</div>;
   }
+
+
 
   return (
     <div className="p-6 max-w-6xl mx-auto">

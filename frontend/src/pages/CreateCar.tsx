@@ -37,7 +37,7 @@ const CreateCar = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/api/categories`, {
+        const response = await axios.get(`${BASE_URL}/api/categories/categories`, {
           headers: { Authorization: `Bearer ${user?.token}` },
         });
         setCategories(response.data);

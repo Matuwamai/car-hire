@@ -32,6 +32,8 @@ const OrganizationBookings = () => {
   const { user  } = useContext(AuthContext);
   const userId = user?.id;
 
+
+
   useEffect(() => {
     const fetchBookings = async () => {
       if (!userId) return;
@@ -56,6 +58,7 @@ const OrganizationBookings = () => {
     fetchBookings();
   }, [userId]);
 
+
   if (!userId) {
     return <p className="text-red-500 text-center mt-4">User not found.</p>;
   }
@@ -74,7 +77,7 @@ const OrganizationBookings = () => {
             className="bg-white rounded-2xl shadow p-4 flex flex-col sm:flex-row items-center gap-4"
           >
             <img
-              src={`http://localhost:5000/${booking.car.images[0]?.url.replace("\\", "/")}`}
+              src={`${BASE_URL}/${booking.car.images[0]?.url.replace("\\", "/")}`}
               alt="Car"
               className="w-40 h-28 object-cover rounded-xl"
             />
