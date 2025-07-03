@@ -14,8 +14,8 @@ export const getAllCarOwners = async (req, res) => {
       prisma.carOwner.findMany({
         where: {
           OR: [
-            { user: { name: { contains: search, mode: "insensitive" } } },
-            { email: { contains: search, mode: "insensitive" } },
+            { user: { name: { contains: search} } },
+            { email: { contains: search } },
           ],
         },
         include: {
