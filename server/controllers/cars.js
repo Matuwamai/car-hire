@@ -52,7 +52,7 @@ export const createCar = async (req, res) => {
   }
 };
 
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = "https://car-hire-w3b8.onrender.com";
 const attachImageUrls = (car) => {
   return {
     ...car,
