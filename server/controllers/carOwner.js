@@ -37,7 +37,7 @@ export const getAllCarOwners = async (req, res) => {
         where: {
           OR: [
             { user: { name: { contains: search, mode: "insensitive" } } },
-            { user:{email: { contains: search, mode: "insensitive" } }},
+            
           ],
         },
       }),
