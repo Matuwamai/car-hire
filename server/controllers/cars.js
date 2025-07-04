@@ -24,7 +24,11 @@ export const createCar = async (req, res) => {
       return res.status(400).json({ message: "Car owner not found" });
     }
 
-    const imageUrls = req.files ? req.files.map((file) => file.path) : [];
+    const imageUrls = req.files
+      ? req.files.map((file) => ({
+          url: `${req.protocol}://${req.get("host")}/${file.path.replace(/\\/g, "/")}`,
+        }))
+      : [];
 
     const car = await prisma.car.create({
       data: {
@@ -39,7 +43,7 @@ export const createCar = async (req, res) => {
         description,
         ownerName,
         images: {
-          create: imageUrls.map((url) => ({ url })),
+          create: imageUrls,
         },
       },
       include: { images: true },
@@ -51,6 +55,7 @@ export const createCar = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 const BASE_URL = "https://car-hire-w3b8.onrender.com";
 const attachImageUrls = (car) => {
