@@ -12,8 +12,7 @@ import {
 import {  authenticate, authorizeRoles } from "../middlewares/auth.js";
 const router = express.Router();
 const upload = multer({ dest: 'uploads/cars' }); 
-
-router.post('/', authenticate,authorizeRoles(["CAR_OWNER"]), upload.array('images'), createCar);
+router.post('/', (["CAR_OWNER"]), upload.array("images"),authenticate, authorizeRoles, createCar);
 router.get('/', authenticate, getAllCars);
 router.get('/:id', authenticate, getCarById);
 router.get('/owner/:userId', authenticate, getCarsByOwner);
